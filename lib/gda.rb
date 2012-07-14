@@ -4,11 +4,7 @@ module GDA
   VERSION = '1.0.0'
 
   module Visitors
-    class Each
-      def initialize block
-        @block = block
-      end
-
+    class Visitor
       def accept node
         return unless node
 
@@ -45,6 +41,33 @@ module GDA
       def visit_GDA_Nodes_From node
         node.targets.each { |n| accept n }
         node.joins.each { |n| accept n }
+      end
+
+      def visit_GDA_Nodes_Target node
+        accept node.expr
+      end
+
+      def visit_GDA_Nodes_Operation node
+        node.operands.each { |n| accept n }
+      end
+
+      def visit_GDA_Nodes_Function node
+        node.args_list.each { |n| accept n }
+      end
+
+      def visit_GDA_Nodes_Order node
+        accept node.expr
+      end
+    end
+
+    class Each < Visitor
+      def initialize block
+        @block = block
+      end
+
+      def accept node
+        super
+        @block.call node if node
       end
     end
   end

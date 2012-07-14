@@ -9,6 +9,7 @@ VALUE cOrder;
 VALUE cNode;
 VALUE cOperation;
 VALUE cTarget;
+VALUE cFunction;
 
 #define WrapNode(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
@@ -58,6 +59,14 @@ WrapNode(cExpr, GdaSqlExpr, param_spec);
 WrapList(cFrom, GdaSqlSelectFrom, targets);
 WrapList(cFrom, GdaSqlSelectFrom, joins);
 
+WrapList(cOperation, GdaSqlOperation, operands);
+
+WrapNode(cTarget, GdaSqlSelectTarget, expr);
+
+WrapList(cFunction, GdaSqlFunction, args_list);
+
+WrapNode(cOrder, GdaSqlSelectOrder, expr);
+
 static VALUE distinct_p(VALUE self)
 {
     GdaSqlStatementSelect * st;
@@ -94,11 +103,14 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_SQL_OPERATION:
 	    return Data_Wrap_Struct(cOperation, NULL, NULL, part);
 	    break;
+	case GDA_SQL_ANY_SQL_FUNCTION:
+	    return Data_Wrap_Struct(cFunction, NULL, NULL, part);
+	    break;
 	case GDA_SQL_ANY_SQL_SELECT_TARGET:
 	    return Data_Wrap_Struct(cTarget, NULL, NULL, part);
 	    break;
 	default:
-	    printf("unknown part: %d\n", part->type);
+	    rb_raise(rb_eRuntimeError, "unknown node type: %d\n", part->type);
 	    return Qnil;
     }
 }
@@ -108,8 +120,6 @@ void Init_gda_nodes()
     mNodes = rb_define_module_under(mGDA, "Nodes");
 
     cNode = rb_define_class_under(mNodes, "Node", rb_cObject);
-
-    cOrder = rb_define_class_under(mNodes, "Order", cNode);
 
     cSelect = rb_define_class_under(mNodes, "Select", cNode);
     rb_define_method(cSelect, "distinct?", distinct_p, 0);
@@ -139,7 +149,16 @@ void Init_gda_nodes()
     WrapperMethod(cFrom, joins);
 
     cOperation = rb_define_class_under(mNodes, "Operation", cNode);
+    WrapperMethod(cOperation, operands);
+
     cTarget = rb_define_class_under(mNodes, "Target", cNode);
+    WrapperMethod(cTarget, expr);
+
+    cFunction = rb_define_class_under(mNodes, "Function", cNode);
+    WrapperMethod(cFunction, args_list);
+
+    cOrder = rb_define_class_under(mNodes, "Order", cNode);
+    WrapperMethod(cOrder, expr);
 }
 
 /* vim: set noet sws=4 sw=4: */
