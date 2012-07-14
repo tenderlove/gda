@@ -4,6 +4,7 @@ VALUE mNodes;
 VALUE cSelect;
 VALUE cFrom;
 VALUE cSelectField;
+VALUE cExpr;
 
 static VALUE from(VALUE self)
 {
@@ -23,24 +24,33 @@ static VALUE distinct_expr(VALUE self)
     return WrapAnyPart((GdaSqlAnyPart *)st->distinct_expr);
 }
 
-static VALUE expr_list(VALUE self)
+static VALUE where_cond(VALUE self)
 {
     GdaSqlStatementSelect *st;
-    GSList *list;
-    VALUE rb_list;
 
     Data_Get_Struct(self, GdaSqlStatementSelect, st);
 
-    rb_list = rb_ary_new();
-    list = st->expr_list;
-
-    while(list) {
-	rb_ary_push(rb_list, WrapAnyPart((GdaSqlAnyPart *)list->data));
-	list = list->next;
-    }
-
-    return rb_list;
+    return WrapAnyPart((GdaSqlAnyPart *)st->where_cond);
 }
+
+#define WrapList(type, lname) \
+    static VALUE lname(VALUE self) \
+{ \
+    type *ptr; \
+    GSList *list; \
+    VALUE rb_list; \
+    Data_Get_Struct(self, type, ptr);\
+    rb_list = rb_ary_new(); \
+    list = ptr->lname; \
+    while(list) { \
+	rb_ary_push(rb_list, WrapAnyPart((GdaSqlAnyPart *)list->data)); \
+	list = list->next; \
+    } \
+    return rb_list; \
+}
+
+WrapList(GdaSqlStatementSelect, group_by);
+WrapList(GdaSqlStatementSelect, expr_list);
 
 VALUE WrapAnyPart(GdaSqlAnyPart *part)
 {
@@ -57,6 +67,9 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_SQL_SELECT_FIELD:
 	    return Data_Wrap_Struct(cSelectField, NULL, NULL, part);
 	    break;
+	case GDA_SQL_ANY_EXPR:
+	    return Data_Wrap_Struct(cExpr, NULL, NULL, part);
+	    break;
 	default:
 	    printf("unknown part: %d\n", part->type);
 	    return Qnil;
@@ -70,10 +83,13 @@ void Init_gda_nodes()
     cSelect = rb_define_class_under(mNodes, "Select", rb_cObject);
     cFrom = rb_define_class_under(mNodes, "From", rb_cObject);
     cSelectField = rb_define_class_under(mNodes, "SelectField", rb_cObject);
+    cExpr = rb_define_class_under(mNodes, "Expr", rb_cObject);
 
     rb_define_method(cSelect, "from", from, 0);
     rb_define_method(cSelect, "distinct_expr", distinct_expr, 0);
     rb_define_method(cSelect, "expr_list", expr_list, 0);
+    rb_define_method(cSelect, "where_cond", where_cond, 0);
+    rb_define_method(cSelect, "group_by", group_by, 0);
 }
 
 /* vim: set noet sws=4 sw=4: */

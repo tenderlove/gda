@@ -8,7 +8,7 @@ module GDA
 
       def setup
         @parser = GDA::SQL::Parser.new
-        @stmt = parser.parse 'SELECT * FROM FOO'
+        @stmt = parser.parse 'SELECT * FROM FOO WHERE 1 = 1 GROUP BY omg'
       end
 
       def test_serialize
@@ -23,6 +23,12 @@ module GDA
         assert_equal 1, stmt.node.expr_list.length
 
         stmt.node.expr_list.each do |node|
+          assert node
+        end
+
+        assert stmt.node.where_cond
+        assert stmt.node.group_by
+        stmt.node.group_by.each do |node|
           assert node
         end
       end
