@@ -58,12 +58,21 @@ module GDA
         assert stmt.node.limit_count
       end
 
-      def test_limit_count
+      def test_limit_offset
         assert stmt.node.limit_offset
       end
 
       def test_distinct?
         refute stmt.node.distinct?
+      end
+
+      def test_each
+        yielded = false
+        stmt.node.each do |node|
+          yielded = true
+          assert node
+        end
+        assert yielded
       end
     end
   end

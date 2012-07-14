@@ -6,9 +6,12 @@ VALUE cFrom;
 VALUE cSelectField;
 VALUE cExpr;
 VALUE cOrder;
+VALUE cNode;
+VALUE cOperation;
+VALUE cTarget;
 
 #define WrapNode(type, lname) \
-    static VALUE lname(VALUE self) \
+    static VALUE rb_gda_##lname(VALUE self) \
 { \
     type *st;\
     Data_Get_Struct(self, type, st); \
@@ -16,7 +19,7 @@ VALUE cOrder;
 }
 
 #define WrapList(type, lname) \
-    static VALUE lname(VALUE self) \
+    static VALUE rb_gda_##lname(VALUE self) \
 { \
     type *ptr; \
     GSList *list; \
@@ -40,6 +43,17 @@ WrapNode(GdaSqlStatementSelect, having_cond);
 WrapList(GdaSqlStatementSelect, order_by);
 WrapNode(GdaSqlStatementSelect, limit_count);
 WrapNode(GdaSqlStatementSelect, limit_offset);
+
+WrapNode(GdaSqlSelectField, expr);
+
+WrapNode(GdaSqlExpr, func);
+WrapNode(GdaSqlExpr, cond);
+WrapNode(GdaSqlExpr, select);
+WrapNode(GdaSqlExpr, case_s);
+WrapNode(GdaSqlExpr, param_spec);
+
+WrapList(GdaSqlSelectFrom, targets);
+WrapList(GdaSqlSelectFrom, joins);
 
 static VALUE distinct_p(VALUE self)
 {
@@ -74,6 +88,12 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_SQL_SELECT_ORDER:
 	    return Data_Wrap_Struct(cOrder, NULL, NULL, part);
 	    break;
+	case GDA_SQL_ANY_SQL_OPERATION:
+	    return Data_Wrap_Struct(cOperation, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_SQL_SELECT_TARGET:
+	    return Data_Wrap_Struct(cTarget, NULL, NULL, part);
+	    break;
 	default:
 	    printf("unknown part: %d\n", part->type);
 	    return Qnil;
@@ -84,22 +104,38 @@ void Init_gda_nodes()
 {
     mNodes = rb_define_module_under(mGDA, "Nodes");
 
-    cSelect = rb_define_class_under(mNodes, "Select", rb_cObject);
-    cFrom = rb_define_class_under(mNodes, "From", rb_cObject);
-    cSelectField = rb_define_class_under(mNodes, "SelectField", rb_cObject);
-    cExpr = rb_define_class_under(mNodes, "Expr", rb_cObject);
-    cOrder = rb_define_class_under(mNodes, "Order", rb_cObject);
+    cNode = rb_define_class_under(mNodes, "Node", rb_cObject);
 
-    rb_define_method(cSelect, "from", from, 0);
-    rb_define_method(cSelect, "distinct_expr", distinct_expr, 0);
-    rb_define_method(cSelect, "expr_list", expr_list, 0);
-    rb_define_method(cSelect, "where_cond", where_cond, 0);
-    rb_define_method(cSelect, "group_by", group_by, 0);
-    rb_define_method(cSelect, "having_cond", having_cond, 0);
-    rb_define_method(cSelect, "order_by", order_by, 0);
-    rb_define_method(cSelect, "limit_count", limit_count, 0);
-    rb_define_method(cSelect, "limit_offset", limit_offset, 0);
+    cOrder = rb_define_class_under(mNodes, "Order", cNode);
+
+    cSelect = rb_define_class_under(mNodes, "Select", cNode);
+    rb_define_method(cSelect, "from", rb_gda_from, 0);
+    rb_define_method(cSelect, "distinct_expr", rb_gda_distinct_expr, 0);
+    rb_define_method(cSelect, "expr_list", rb_gda_expr_list, 0);
+    rb_define_method(cSelect, "where_cond", rb_gda_where_cond, 0);
+    rb_define_method(cSelect, "group_by", rb_gda_group_by, 0);
+    rb_define_method(cSelect, "having_cond", rb_gda_having_cond, 0);
+    rb_define_method(cSelect, "order_by", rb_gda_order_by, 0);
+    rb_define_method(cSelect, "limit_count", rb_gda_limit_count, 0);
+    rb_define_method(cSelect, "limit_offset", rb_gda_limit_offset, 0);
     rb_define_method(cSelect, "distinct?", distinct_p, 0);
+
+    cSelectField = rb_define_class_under(mNodes, "SelectField", cNode);
+    rb_define_method(cSelectField, "expr", rb_gda_expr, 0);
+
+    cExpr = rb_define_class_under(mNodes, "Expr", cNode);
+    rb_define_method(cExpr, "func", rb_gda_func, 0);
+    rb_define_method(cExpr, "cond", rb_gda_cond, 0);
+    rb_define_method(cExpr, "select", rb_gda_select, 0);
+    rb_define_method(cExpr, "case_s", rb_gda_case_s, 0);
+    rb_define_method(cExpr, "param_spec", rb_gda_param_spec, 0);
+
+    cFrom = rb_define_class_under(mNodes, "From", cNode);
+    rb_define_method(cFrom, "targets", rb_gda_targets, 0);
+    rb_define_method(cFrom, "joins", rb_gda_joins, 0);
+
+    cOperation = rb_define_class_under(mNodes, "Operation", cNode);
+    cTarget = rb_define_class_under(mNodes, "Target", cNode);
 }
 
 /* vim: set noet sws=4 sw=4: */

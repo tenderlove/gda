@@ -2,4 +2,58 @@ require 'gda.so'
 
 module GDA
   VERSION = '1.0.0'
+
+  module Visitors
+    class Each
+      def initialize block
+        @block = block
+      end
+
+      def accept node
+        return unless node
+
+        method = "visit_" + node.class.name.split('::').join('_')
+        send method, node
+      end
+
+      private
+
+      def visit_GDA_Nodes_Select node
+        accept node.distinct_expr
+        node.expr_list.each { |n| accept n }
+        accept node.from
+        accept node.where_cond
+        node.group_by.each { |n| accept n }
+        accept node.having_cond
+        node.order_by.each { |n| accept n }
+        accept node.limit_count
+        accept node.limit_offset
+      end
+
+      def visit_GDA_Nodes_SelectField node
+        accept node.expr
+      end
+
+      def visit_GDA_Nodes_Expr node
+        accept node.func
+        accept node.cond
+        accept node.select
+        accept node.case_s
+        accept node.param_spec
+      end
+
+      def visit_GDA_Nodes_From node
+        node.targets.each { |n| accept n }
+        node.joins.each { |n| accept n }
+      end
+    end
+  end
+
+  module Nodes
+    class Node
+      def each &block
+        Visitors::Each.new(block).accept self
+      end
+    end
+  end
 end
