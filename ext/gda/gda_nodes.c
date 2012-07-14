@@ -6,31 +6,12 @@ VALUE cFrom;
 VALUE cSelectField;
 VALUE cExpr;
 
-static VALUE from(VALUE self)
-{
-    GdaSqlStatementSelect *st;
-
-    Data_Get_Struct(self, GdaSqlStatementSelect, st);
-
-    return WrapAnyPart((GdaSqlAnyPart *)st->from);
-}
-
-static VALUE distinct_expr(VALUE self)
-{
-    GdaSqlStatementSelect *st;
-
-    Data_Get_Struct(self, GdaSqlStatementSelect, st);
-
-    return WrapAnyPart((GdaSqlAnyPart *)st->distinct_expr);
-}
-
-static VALUE where_cond(VALUE self)
-{
-    GdaSqlStatementSelect *st;
-
-    Data_Get_Struct(self, GdaSqlStatementSelect, st);
-
-    return WrapAnyPart((GdaSqlAnyPart *)st->where_cond);
+#define WrapNode(type, lname) \
+    static VALUE lname(VALUE self) \
+{ \
+    type *st;\
+    Data_Get_Struct(self, type, st); \
+    return WrapAnyPart((GdaSqlAnyPart *)st->lname); \
 }
 
 #define WrapList(type, lname) \
@@ -49,6 +30,9 @@ static VALUE where_cond(VALUE self)
     return rb_list; \
 }
 
+WrapNode(GdaSqlStatementSelect, distinct_expr);
+WrapNode(GdaSqlStatementSelect, from);
+WrapNode(GdaSqlStatementSelect, where_cond);
 WrapList(GdaSqlStatementSelect, group_by);
 WrapList(GdaSqlStatementSelect, expr_list);
 
