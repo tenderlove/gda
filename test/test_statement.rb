@@ -14,6 +14,18 @@ module GDA
       def test_serialize
         assert stmt.serialize
       end
+
+      def test_node
+        assert stmt.node
+        assert stmt.node.from
+        assert_nil stmt.node.distinct_expr
+
+        assert_equal 1, stmt.node.expr_list.length
+
+        stmt.node.expr_list.each do |node|
+          assert node
+        end
+      end
     end
   end
 end
