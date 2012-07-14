@@ -5,6 +5,7 @@ VALUE cSelect;
 VALUE cFrom;
 VALUE cSelectField;
 VALUE cExpr;
+VALUE cOrder;
 
 #define WrapNode(type, lname) \
     static VALUE lname(VALUE self) \
@@ -31,10 +32,26 @@ VALUE cExpr;
 }
 
 WrapNode(GdaSqlStatementSelect, distinct_expr);
+WrapList(GdaSqlStatementSelect, expr_list);
 WrapNode(GdaSqlStatementSelect, from);
 WrapNode(GdaSqlStatementSelect, where_cond);
 WrapList(GdaSqlStatementSelect, group_by);
-WrapList(GdaSqlStatementSelect, expr_list);
+WrapNode(GdaSqlStatementSelect, having_cond);
+WrapList(GdaSqlStatementSelect, order_by);
+WrapNode(GdaSqlStatementSelect, limit_count);
+WrapNode(GdaSqlStatementSelect, limit_offset);
+
+static VALUE distinct_p(VALUE self)
+{
+    GdaSqlStatementSelect * st;
+
+    Data_Get_Struct(self, GdaSqlStatementSelect, st);
+
+    if (st->distinct)
+	return Qtrue;
+
+    return Qfalse;
+}
 
 VALUE WrapAnyPart(GdaSqlAnyPart *part)
 {
@@ -54,6 +71,9 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_EXPR:
 	    return Data_Wrap_Struct(cExpr, NULL, NULL, part);
 	    break;
+	case GDA_SQL_ANY_SQL_SELECT_ORDER:
+	    return Data_Wrap_Struct(cOrder, NULL, NULL, part);
+	    break;
 	default:
 	    printf("unknown part: %d\n", part->type);
 	    return Qnil;
@@ -68,12 +88,18 @@ void Init_gda_nodes()
     cFrom = rb_define_class_under(mNodes, "From", rb_cObject);
     cSelectField = rb_define_class_under(mNodes, "SelectField", rb_cObject);
     cExpr = rb_define_class_under(mNodes, "Expr", rb_cObject);
+    cOrder = rb_define_class_under(mNodes, "Order", rb_cObject);
 
     rb_define_method(cSelect, "from", from, 0);
     rb_define_method(cSelect, "distinct_expr", distinct_expr, 0);
     rb_define_method(cSelect, "expr_list", expr_list, 0);
     rb_define_method(cSelect, "where_cond", where_cond, 0);
     rb_define_method(cSelect, "group_by", group_by, 0);
+    rb_define_method(cSelect, "having_cond", having_cond, 0);
+    rb_define_method(cSelect, "order_by", order_by, 0);
+    rb_define_method(cSelect, "limit_count", limit_count, 0);
+    rb_define_method(cSelect, "limit_offset", limit_offset, 0);
+    rb_define_method(cSelect, "distinct?", distinct_p, 0);
 }
 
 /* vim: set noet sws=4 sw=4: */
