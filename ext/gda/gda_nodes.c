@@ -10,16 +10,16 @@ VALUE cNode;
 VALUE cOperation;
 VALUE cTarget;
 
-#define WrapNode(type, lname) \
-    static VALUE rb_gda_##lname(VALUE self) \
+#define WrapNode(klass, type, lname) \
+    static VALUE rb_##klass##_##lname(VALUE self) \
 { \
     type *st;\
     Data_Get_Struct(self, type, st); \
     return WrapAnyPart((GdaSqlAnyPart *)st->lname); \
 }
 
-#define WrapList(type, lname) \
-    static VALUE rb_gda_##lname(VALUE self) \
+#define WrapList(klass, type, lname) \
+    static VALUE rb_##klass##_##lname(VALUE self) \
 { \
     type *ptr; \
     GSList *list; \
@@ -34,26 +34,29 @@ VALUE cTarget;
     return rb_list; \
 }
 
-WrapNode(GdaSqlStatementSelect, distinct_expr);
-WrapList(GdaSqlStatementSelect, expr_list);
-WrapNode(GdaSqlStatementSelect, from);
-WrapNode(GdaSqlStatementSelect, where_cond);
-WrapList(GdaSqlStatementSelect, group_by);
-WrapNode(GdaSqlStatementSelect, having_cond);
-WrapList(GdaSqlStatementSelect, order_by);
-WrapNode(GdaSqlStatementSelect, limit_count);
-WrapNode(GdaSqlStatementSelect, limit_offset);
+#define WrapperMethod(klass, lname) \
+    rb_define_method(klass, #lname, rb_##klass##_##lname, 0);
 
-WrapNode(GdaSqlSelectField, expr);
+WrapNode(cSelect, GdaSqlStatementSelect, distinct_expr);
+WrapList(cSelect, GdaSqlStatementSelect, expr_list);
+WrapNode(cSelect, GdaSqlStatementSelect, from);
+WrapNode(cSelect, GdaSqlStatementSelect, where_cond);
+WrapList(cSelect, GdaSqlStatementSelect, group_by);
+WrapNode(cSelect, GdaSqlStatementSelect, having_cond);
+WrapList(cSelect, GdaSqlStatementSelect, order_by);
+WrapNode(cSelect, GdaSqlStatementSelect, limit_count);
+WrapNode(cSelect, GdaSqlStatementSelect, limit_offset);
 
-WrapNode(GdaSqlExpr, func);
-WrapNode(GdaSqlExpr, cond);
-WrapNode(GdaSqlExpr, select);
-WrapNode(GdaSqlExpr, case_s);
-WrapNode(GdaSqlExpr, param_spec);
+WrapNode(cSelectField, GdaSqlSelectField, expr);
 
-WrapList(GdaSqlSelectFrom, targets);
-WrapList(GdaSqlSelectFrom, joins);
+WrapNode(cExpr, GdaSqlExpr, func);
+WrapNode(cExpr, GdaSqlExpr, cond);
+WrapNode(cExpr, GdaSqlExpr, select);
+WrapNode(cExpr, GdaSqlExpr, case_s);
+WrapNode(cExpr, GdaSqlExpr, param_spec);
+
+WrapList(cFrom, GdaSqlSelectFrom, targets);
+WrapList(cFrom, GdaSqlSelectFrom, joins);
 
 static VALUE distinct_p(VALUE self)
 {
@@ -109,30 +112,31 @@ void Init_gda_nodes()
     cOrder = rb_define_class_under(mNodes, "Order", cNode);
 
     cSelect = rb_define_class_under(mNodes, "Select", cNode);
-    rb_define_method(cSelect, "from", rb_gda_from, 0);
-    rb_define_method(cSelect, "distinct_expr", rb_gda_distinct_expr, 0);
-    rb_define_method(cSelect, "expr_list", rb_gda_expr_list, 0);
-    rb_define_method(cSelect, "where_cond", rb_gda_where_cond, 0);
-    rb_define_method(cSelect, "group_by", rb_gda_group_by, 0);
-    rb_define_method(cSelect, "having_cond", rb_gda_having_cond, 0);
-    rb_define_method(cSelect, "order_by", rb_gda_order_by, 0);
-    rb_define_method(cSelect, "limit_count", rb_gda_limit_count, 0);
-    rb_define_method(cSelect, "limit_offset", rb_gda_limit_offset, 0);
     rb_define_method(cSelect, "distinct?", distinct_p, 0);
 
+    WrapperMethod(cSelect, from);
+    WrapperMethod(cSelect, distinct_expr);
+    WrapperMethod(cSelect, expr_list);
+    WrapperMethod(cSelect, where_cond);
+    WrapperMethod(cSelect, group_by);
+    WrapperMethod(cSelect, having_cond);
+    WrapperMethod(cSelect, order_by);
+    WrapperMethod(cSelect, limit_count);
+    WrapperMethod(cSelect, limit_offset);
+
     cSelectField = rb_define_class_under(mNodes, "SelectField", cNode);
-    rb_define_method(cSelectField, "expr", rb_gda_expr, 0);
+    WrapperMethod(cSelectField, expr);
 
     cExpr = rb_define_class_under(mNodes, "Expr", cNode);
-    rb_define_method(cExpr, "func", rb_gda_func, 0);
-    rb_define_method(cExpr, "cond", rb_gda_cond, 0);
-    rb_define_method(cExpr, "select", rb_gda_select, 0);
-    rb_define_method(cExpr, "case_s", rb_gda_case_s, 0);
-    rb_define_method(cExpr, "param_spec", rb_gda_param_spec, 0);
+    WrapperMethod(cExpr, func);
+    WrapperMethod(cExpr, cond);
+    WrapperMethod(cExpr, select);
+    WrapperMethod(cExpr, case_s);
+    WrapperMethod(cExpr, param_spec);
 
     cFrom = rb_define_class_under(mNodes, "From", cNode);
-    rb_define_method(cFrom, "targets", rb_gda_targets, 0);
-    rb_define_method(cFrom, "joins", rb_gda_joins, 0);
+    WrapperMethod(cFrom, targets);
+    WrapperMethod(cFrom, joins);
 
     cOperation = rb_define_class_under(mNodes, "Operation", cNode);
     cTarget = rb_define_class_under(mNodes, "Target", cNode);
