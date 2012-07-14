@@ -3,9 +3,6 @@
 require 'rubygems'
 require 'hoe'
 
-gem 'rake-compiler', '>= 0.4.1'
-require "rake/extensiontask"
-
 Hoe.plugins.delete :rubyforge
 Hoe.plugin :minitest
 Hoe.plugin :gemspec # `gem install hoe-gemspec`
@@ -24,9 +21,13 @@ Hoe.spec 'gda' do
     :required_ruby_version => '>= 1.9.3'
   }
 
+  require "rake/extensiontask"
+
   Rake::ExtensionTask.new "gda", spec do |ext|
     ext.lib_dir = File.join(*['lib', ENV['FAT_DIR']].compact)
   end
 end
+
+task :test => :compile
 
 # vim: syntax=ruby

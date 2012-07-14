@@ -1,26 +1,38 @@
 = gda
 
-* FIX (url)
+* http://github.com/tenderlove/gda
 
 == DESCRIPTION:
 
-FIX (describe your package)
+An SQL parser. Wraps libgda in a loving embrace to give you a ruby level SQL
+parser.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* Not done yet
+* Leaks memory
+* Do not use
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+  parser = GDA::SQL::Parser.new
 
-== REQUIREMENTS:
+  stmt = parser.parse 'SELECT * FROM FOO WHERE 1 = 1 GROUP BY omg HAVING omg(id) < 2 ORDER BY foo, bar LIMIT 50 OFFSET 2'
 
-* FIX (list of requirements)
+  stmt.ast.each do |node|
+    p node
+  end
+
+== HACKING:
+
+    $ brew install libgda
+    $ gem install hoe rake-compiler
+    $ rake
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* brew install libgda
+* gem install gda
 
 == LICENSE:
 
