@@ -33,6 +33,11 @@ module GDA
         accept node.select
       end
 
+      def visit_GDA_Nodes_Delete node
+        accept node.table
+        accept node.cond
+      end
+
       def visit_GDA_Nodes_SelectField node
         accept node.expr
       end
