@@ -62,6 +62,8 @@ VALUE cCommit;
 #define WrapperMethod(klass, lname) \
     rb_define_method(klass, #lname, rb_##klass##_##lname, 0);
 
+WrapString(cTable, GdaSqlTable, table_name);
+
 WrapNode(cSelect, GdaSqlStatementSelect, distinct_expr);
 WrapList(cSelect, GdaSqlStatementSelect, expr_list);
 WrapNode(cSelect, GdaSqlStatementSelect, from);
@@ -301,6 +303,7 @@ void Init_gda_nodes()
     WrapperMethod(cUpdate, cond);
 
     cTable = rb_define_class_under(mNodes, "Table", cNode);
+    WrapperMethod(cTable, table_name);
 
     cUnknown = rb_define_class_under(mNodes, "Unknown", cNode);
     WrapperMethod(cUnknown, expressions);
