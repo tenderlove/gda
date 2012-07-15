@@ -4,11 +4,11 @@ module GDA
   VERSION = '1.0.0'
 
   module Visitors
-    module Acceptable
+    class Visitor
       def accept node
         return unless node
 
-        method = method_cache.fetch(node.class) { |k|
+        method = METHOD_CACHE.fetch(node.class) { |k|
           "visit_" + k.name.split('::').join('_')
         }
 
@@ -16,20 +16,6 @@ module GDA
       end
 
       private
-
-      def method_cache
-        {}
-      end
-    end
-
-    class Visitor
-      include Acceptable
-
-      private
-
-      def method_cache
-        METHOD_CACHE
-      end
 
       def visit_GDA_Nodes_Select node
         accept node.distinct_expr
