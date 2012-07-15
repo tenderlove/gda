@@ -24,6 +24,14 @@ VALUE cBegin;
 VALUE cRollback;
 VALUE cCommit;
 
+#define WrapInteger(klass, type, lname) \
+    static VALUE rb_##klass##_##lname(VALUE self) \
+{ \
+    type *st;\
+    Data_Get_Struct(self, type, st); \
+    return INT2NUM(st->lname); \
+}
+
 #define WrapBoolean(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
 { \
@@ -131,6 +139,7 @@ WrapNode(cDelete, GdaSqlStatementDelete, cond);
 
 WrapNode(cJoin, GdaSqlSelectJoin, expr);
 WrapList(cJoin, GdaSqlSelectJoin, use);
+WrapInteger(cJoin, GdaSqlSelectJoin, position);
 
 WrapList(cUnknown, GdaSqlStatementUnknown, expressions);
 
@@ -259,6 +268,18 @@ static VALUE rb_cOperation_operator(VALUE self)
     return Qnil;
 }
 
+static VALUE rb_cJoin_join_type(VALUE self)
+{
+    GdaSqlSelectJoin * st;
+
+    Data_Get_Struct(self, GdaSqlSelectJoin, st);
+
+    if (st->type)
+	return rb_str_new2(gda_sql_select_join_type_to_string(st->type));
+
+    return Qnil;
+}
+
 void Init_gda_nodes()
 {
     mNodes = rb_define_module_under(mGDA, "Nodes");
@@ -341,6 +362,8 @@ void Init_gda_nodes()
     cJoin = rb_define_class_under(mNodes, "Join", cNode);
     WrapperMethod(cJoin, expr);
     WrapperMethod(cJoin, use);
+    WrapperMethod(cJoin, join_type);
+    WrapperMethod(cJoin, position);
 
     cField = rb_define_class_under(mNodes, "Field", cNode);
     WrapperMethod(cField, field_name);
