@@ -24,6 +24,17 @@ VALUE cBegin;
 VALUE cRollback;
 VALUE cCommit;
 
+#define WrapString(klass, type, lname) \
+    static VALUE rb_##klass##_##lname(VALUE self) \
+{ \
+    type *st;\
+    Data_Get_Struct(self, type, st); \
+    if (st->lname) \
+      return rb_str_new2(st->lname); \
+    else \
+      return Qnil; \
+}
+
 #define WrapNode(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
 { \
@@ -62,12 +73,17 @@ WrapNode(cSelect, GdaSqlStatementSelect, limit_count);
 WrapNode(cSelect, GdaSqlStatementSelect, limit_offset);
 
 WrapNode(cSelectField, GdaSqlSelectField, expr);
+WrapString(cSelectField, GdaSqlSelectField, field_name);
+WrapString(cSelectField, GdaSqlSelectField, table_name);
+WrapString(cSelectField, GdaSqlSelectField, as);
 
 WrapNode(cExpr, GdaSqlExpr, func);
 WrapNode(cExpr, GdaSqlExpr, cond);
 WrapNode(cExpr, GdaSqlExpr, select);
 WrapNode(cExpr, GdaSqlExpr, case_s);
 WrapNode(cExpr, GdaSqlExpr, param_spec);
+WrapString(cExpr, GdaSqlExpr, value);
+WrapString(cExpr, GdaSqlExpr, cast_as);
 
 WrapList(cFrom, GdaSqlSelectFrom, targets);
 WrapList(cFrom, GdaSqlSelectFrom, joins);
@@ -205,6 +221,9 @@ void Init_gda_nodes()
 
     cSelectField = rb_define_class_under(mNodes, "SelectField", cNode);
     WrapperMethod(cSelectField, expr);
+    WrapperMethod(cSelectField, field_name);
+    WrapperMethod(cSelectField, table_name);
+    WrapperMethod(cSelectField, as);
 
     cExpr = rb_define_class_under(mNodes, "Expr", cNode);
     WrapperMethod(cExpr, func);
@@ -212,6 +231,8 @@ void Init_gda_nodes()
     WrapperMethod(cExpr, select);
     WrapperMethod(cExpr, case_s);
     WrapperMethod(cExpr, param_spec);
+    WrapperMethod(cExpr, value);
+    WrapperMethod(cExpr, cast_as);
 
     cFrom = rb_define_class_under(mNodes, "From", cNode);
     WrapperMethod(cFrom, targets);
