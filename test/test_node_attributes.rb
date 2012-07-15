@@ -77,6 +77,20 @@ module GDA
         super
       end
 
+      def visit_GDA_Nodes_RollbackSavepoint node
+        assert_string node, :__type__
+        assert_string node, :isolation_level
+        assert_string node, :trans_mode
+        assert_string node, :trans_name
+        super
+      end
+
+      alias :visit_GDA_Nodes_Begin           :visit_GDA_Nodes_RollbackSavepoint
+      alias :visit_GDA_Nodes_Savepoint       :visit_GDA_Nodes_RollbackSavepoint
+      alias :visit_GDA_Nodes_DeleteSavepoint :visit_GDA_Nodes_RollbackSavepoint
+      alias :visit_GDA_Nodes_Commit          :visit_GDA_Nodes_RollbackSavepoint
+      alias :visit_GDA_Nodes_Rollback        :visit_GDA_Nodes_RollbackSavepoint
+
       def visit_GDA_Nodes_Field node
         assert_string node, :field_name
         super

@@ -281,6 +281,86 @@ static VALUE rb_cJoin_join_type(VALUE self)
     return Qnil;
 }
 
+static VALUE rb_st_type(VALUE self)
+{
+    GdaSqlAnyPart * st;
+
+    Data_Get_Struct(self, GdaSqlAnyPart, st);
+
+    switch(st->type) {
+	case GDA_SQL_ANY_STMT_BEGIN:
+	    return rb_str_new2("BEGIN");
+	    break;
+	case GDA_SQL_ANY_STMT_ROLLBACK:
+	    return rb_str_new2("ROLLBACK");
+	    break;
+	case GDA_SQL_ANY_STMT_COMMIT:
+	    return rb_str_new2("COMMIT");
+	    break;
+	case GDA_SQL_ANY_STMT_SAVEPOINT:
+	    return rb_str_new2("SAVEPOINT");
+	    break;
+	case GDA_SQL_ANY_STMT_ROLLBACK_SAVEPOINT:
+	    return rb_str_new2("ROLLBACK SAVEPOINT");
+	    break;
+	case GDA_SQL_ANY_STMT_DELETE_SAVEPOINT:
+	    return rb_str_new2("DELETE SAVEPOINT");
+	    break;
+	default:
+	    return Qnil;
+    }
+}
+
+static VALUE rb_st_isolation_level(VALUE self)
+{
+    GdaSqlStatementTransaction * st;
+
+    Data_Get_Struct(self, GdaSqlStatementTransaction, st);
+
+    switch(st->isolation_level) {
+	default:
+	case GDA_TRANSACTION_ISOLATION_UNKNOWN:
+	    return rb_str_new2("UNKNOWN");
+	    break;
+	case GDA_TRANSACTION_ISOLATION_READ_COMMITTED:
+	    return rb_str_new2("READ COMMITTED");
+	    break;
+	case GDA_TRANSACTION_ISOLATION_READ_UNCOMMITTED:
+	    return rb_str_new2("READ UNCOMMITTED");
+	    break;
+	case GDA_TRANSACTION_ISOLATION_REPEATABLE_READ:
+	    return rb_str_new2("REPEATABLE READ");
+	    break;
+	case GDA_TRANSACTION_ISOLATION_SERIALIZABLE:
+	    return rb_str_new2("SERIALIZABLE");
+	    break;
+    }
+}
+
+static VALUE rb_st_trans_mode(VALUE self)
+{
+    GdaSqlStatementTransaction * st;
+
+    Data_Get_Struct(self, GdaSqlStatementTransaction, st);
+
+    if (st->trans_mode)
+	return rb_str_new2(st->trans_mode);
+
+    return Qnil;
+}
+
+static VALUE rb_st_trans_name(VALUE self)
+{
+    GdaSqlStatementTransaction * st;
+
+    Data_Get_Struct(self, GdaSqlStatementTransaction, st);
+
+    if (st->trans_name)
+	return rb_str_new2(st->trans_name);
+
+    return Qnil;
+}
+
 void Init_gda_nodes()
 {
     mNodes = rb_define_module_under(mGDA, "Nodes");
@@ -376,6 +456,34 @@ void Init_gda_nodes()
     cSavepoint = rb_define_class_under(mNodes, "Savepoint", cNode);
     cRollbackSavepoint = rb_define_class_under(mNodes, "RollbackSavepoint", cNode);
     cDeleteSavepoint = rb_define_class_under(mNodes, "DeleteSavepoint", cNode);
+
+    rb_define_method(cRollbackSavepoint, "__type__", rb_st_type, 0);
+    rb_define_method(cBegin, "__type__", rb_st_type, 0);
+    rb_define_method(cSavepoint, "__type__", rb_st_type, 0);
+    rb_define_method(cCommit, "__type__", rb_st_type, 0);
+    rb_define_method(cRollback, "__type__", rb_st_type, 0);
+    rb_define_method(cDeleteSavepoint, "__type__", rb_st_type, 0);
+
+    rb_define_method(cRollbackSavepoint, "isolation_level", rb_st_isolation_level, 0);
+    rb_define_method(cBegin, "isolation_level", rb_st_isolation_level, 0);
+    rb_define_method(cSavepoint, "isolation_level", rb_st_isolation_level, 0);
+    rb_define_method(cCommit, "isolation_level", rb_st_isolation_level, 0);
+    rb_define_method(cRollback, "isolation_level", rb_st_isolation_level, 0);
+    rb_define_method(cDeleteSavepoint, "isolation_level", rb_st_isolation_level, 0);
+
+    rb_define_method(cRollbackSavepoint, "trans_mode", rb_st_trans_mode, 0);
+    rb_define_method(cBegin, "trans_mode", rb_st_trans_mode, 0);
+    rb_define_method(cSavepoint, "trans_mode", rb_st_trans_mode, 0);
+    rb_define_method(cCommit, "trans_mode", rb_st_trans_mode, 0);
+    rb_define_method(cRollback, "trans_mode", rb_st_trans_mode, 0);
+    rb_define_method(cDeleteSavepoint, "trans_mode", rb_st_trans_mode, 0);
+
+    rb_define_method(cRollbackSavepoint, "trans_name", rb_st_trans_name, 0);
+    rb_define_method(cBegin, "trans_name", rb_st_trans_name, 0);
+    rb_define_method(cSavepoint, "trans_name", rb_st_trans_name, 0);
+    rb_define_method(cCommit, "trans_name", rb_st_trans_name, 0);
+    rb_define_method(cRollback, "trans_name", rb_st_trans_name, 0);
+    rb_define_method(cDeleteSavepoint, "trans_name", rb_st_trans_name, 0);
 }
 
 /* vim: set noet sws=4 sw=4: */
