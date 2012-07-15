@@ -4,9 +4,6 @@ module GDA
   class TestNodeAttributes < TestCase
     attr_reader :parser
 
-    module Failing
-    end
-
     class AttributeTest < Visitors::Visitor
       include Failing
 
