@@ -98,6 +98,18 @@ module GDA
 
       def visit_GDA_Nodes_RollbackSavepoint node
       end
+
+      def visit_GDA_Nodes_Begin node
+      end
+
+      def visit_GDA_Nodes_DeleteSavepoint node
+      end
+
+      def visit_GDA_Nodes_Rollback node
+      end
+
+      def visit_GDA_Nodes_Commit node
+      end
     end
 
     class Each < Visitor

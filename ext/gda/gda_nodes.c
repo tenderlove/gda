@@ -18,7 +18,11 @@ VALUE cUnknown;
 VALUE cJoin;
 VALUE cField;
 VALUE cRollbackSavepoint;
+VALUE cDeleteSavepoint;
 VALUE cSavepoint;
+VALUE cBegin;
+VALUE cRollback;
+VALUE cCommit;
 
 #define WrapNode(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
@@ -123,11 +127,23 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_STMT_DELETE:
 	    return Data_Wrap_Struct(cDelete, NULL, NULL, part);
 	    break;
+	case GDA_SQL_ANY_STMT_BEGIN:
+	    return Data_Wrap_Struct(cBegin, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_ROLLBACK:
+	    return Data_Wrap_Struct(cRollback, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_COMMIT:
+	    return Data_Wrap_Struct(cCommit, NULL, NULL, part);
+	    break;
 	case GDA_SQL_ANY_STMT_SAVEPOINT:
 	    return Data_Wrap_Struct(cSavepoint, NULL, NULL, part);
 	    break;
 	case GDA_SQL_ANY_STMT_ROLLBACK_SAVEPOINT:
 	    return Data_Wrap_Struct(cRollbackSavepoint, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_DELETE_SAVEPOINT:
+	    return Data_Wrap_Struct(cDeleteSavepoint, NULL, NULL, part);
 	    break;
 	case GDA_SQL_ANY_STMT_UNKNOWN:
 	    return Data_Wrap_Struct(cUnknown, NULL, NULL, part);
@@ -239,8 +255,12 @@ void Init_gda_nodes()
 
     cField = rb_define_class_under(mNodes, "Field", cNode);
 
+    cBegin = rb_define_class_under(mNodes, "Begin", cNode);
+    cRollback = rb_define_class_under(mNodes, "Rollback", cNode);
+    cCommit = rb_define_class_under(mNodes, "Commit", cNode);
     cSavepoint = rb_define_class_under(mNodes, "Savepoint", cNode);
     cRollbackSavepoint = rb_define_class_under(mNodes, "RollbackSavepoint", cNode);
+    cDeleteSavepoint = rb_define_class_under(mNodes, "DeleteSavepoint", cNode);
 }
 
 /* vim: set noet sws=4 sw=4: */
