@@ -76,7 +76,6 @@ WrapNode(cOrder, GdaSqlSelectOrder, expr);
 
 WrapNode(cInsert, GdaSqlStatementInsert, table);
 WrapList(cInsert, GdaSqlStatementInsert, fields_list);
-WrapList(cInsert, GdaSqlStatementInsert, values_list);
 WrapNode(cInsert, GdaSqlStatementInsert, select);
 
 WrapNode(cUpdate, GdaSqlStatementUpdate, table);
@@ -209,7 +208,6 @@ void Init_gda_nodes()
     cInsert = rb_define_class_under(mNodes, "Insert", cNode);
     WrapperMethod(cInsert, table);
     WrapperMethod(cInsert, fields_list);
-    WrapperMethod(cInsert, values_list);
     WrapperMethod(cInsert, select);
 
     cDelete = rb_define_class_under(mNodes, "Delete", cNode);
