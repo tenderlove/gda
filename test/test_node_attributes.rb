@@ -72,6 +72,12 @@ module GDA
         super
       end
 
+      def visit_GDA_Nodes_Join node
+        assert_string node, :join_type
+        assert_int node, :position
+        super
+      end
+
       def visit_GDA_Nodes_Target node
         assert_string node, :table_name
         assert_string node, :as
@@ -81,6 +87,11 @@ module GDA
       def assert_string node, m
         assert_respond_to node, m
         assert_kind_of(String, node.send(m)) if node.send(m)
+      end
+
+      def assert_int node, m
+        assert_respond_to node, m
+        assert_kind_of(Numeric, node.send(m)) if node.send(m)
       end
 
       Visitors::Visitor.private_instance_methods.grep(/^visit_(.*)/) do |method|
