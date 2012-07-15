@@ -1,9 +1,8 @@
-require 'minitest/autorun'
-require 'gda'
+require 'helper'
 
 module GDA
   module SQL
-    class TestStatement < MiniTest::Unit::TestCase
+    class TestStatement < TestCase
       attr_reader :parser, :stmt
 
       def setup

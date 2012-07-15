@@ -23,6 +23,10 @@ static VALUE parse(VALUE self, VALUE sql)
 
     stmt = gda_sql_parser_parse_string(parser, StringValuePtr(sql), &rest, &error);
 
+    if (!stmt) {
+	rb_raise(rb_eRuntimeError, "error parsing sql");
+    }
+
     return Data_Wrap_Struct(cStatement, NULL, NULL, stmt);
 }
 

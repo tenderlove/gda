@@ -10,6 +10,9 @@ VALUE cNode;
 VALUE cOperation;
 VALUE cTarget;
 VALUE cFunction;
+VALUE cInsert;
+VALUE cDelete;
+VALUE cUpdate;
 
 #define WrapNode(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
@@ -67,6 +70,11 @@ WrapList(cFunction, GdaSqlFunction, args_list);
 
 WrapNode(cOrder, GdaSqlSelectOrder, expr);
 
+WrapNode(cInsert, GdaSqlStatementInsert, table);
+WrapList(cInsert, GdaSqlStatementInsert, fields_list);
+WrapList(cInsert, GdaSqlStatementInsert, values_list);
+WrapNode(cInsert, GdaSqlStatementInsert, select);
+
 static VALUE distinct_p(VALUE self)
 {
     GdaSqlStatementSelect * st;
@@ -87,6 +95,15 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
     switch(part->type) {
 	case GDA_SQL_ANY_STMT_SELECT:
 	    return Data_Wrap_Struct(cSelect, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_INSERT:
+	    return Data_Wrap_Struct(cInsert, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_UPDATE:
+	    return Data_Wrap_Struct(cUpdate, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_DELETE:
+	    return Data_Wrap_Struct(cDelete, NULL, NULL, part);
 	    break;
 	case GDA_SQL_ANY_SQL_SELECT_FROM:
 	    return Data_Wrap_Struct(cFrom, NULL, NULL, part);
@@ -159,6 +176,15 @@ void Init_gda_nodes()
 
     cOrder = rb_define_class_under(mNodes, "Order", cNode);
     WrapperMethod(cOrder, expr);
+
+    cInsert = rb_define_class_under(mNodes, "Insert", cNode);
+    WrapperMethod(cInsert, table);
+    WrapperMethod(cInsert, fields_list);
+    WrapperMethod(cInsert, values_list);
+    WrapperMethod(cInsert, select);
+
+    cDelete = rb_define_class_under(mNodes, "Delete", cNode);
+    cUpdate = rb_define_class_under(mNodes, "Update", cNode);
 }
 
 /* vim: set noet sws=4 sw=4: */

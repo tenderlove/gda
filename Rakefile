@@ -15,6 +15,7 @@ Hoe.spec 'gda' do
   self.extra_rdoc_files  = FileList['*.rdoc']
 
   extra_dev_deps << ['rake-compiler', '>= 0.4.1']
+  extra_dev_deps << ['sqlite3']
 
   self.spec_extras = {
     :extensions            => ["ext/gda/extconf.rb"],
