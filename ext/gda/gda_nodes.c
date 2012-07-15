@@ -17,6 +17,8 @@ VALUE cTable;
 VALUE cUnknown;
 VALUE cJoin;
 VALUE cField;
+VALUE cRollbackSavepoint;
+VALUE cSavepoint;
 
 #define WrapNode(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
@@ -120,6 +122,12 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	    break;
 	case GDA_SQL_ANY_STMT_DELETE:
 	    return Data_Wrap_Struct(cDelete, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_SAVEPOINT:
+	    return Data_Wrap_Struct(cSavepoint, NULL, NULL, part);
+	    break;
+	case GDA_SQL_ANY_STMT_ROLLBACK_SAVEPOINT:
+	    return Data_Wrap_Struct(cRollbackSavepoint, NULL, NULL, part);
 	    break;
 	case GDA_SQL_ANY_STMT_UNKNOWN:
 	    return Data_Wrap_Struct(cUnknown, NULL, NULL, part);
@@ -230,6 +238,9 @@ void Init_gda_nodes()
     WrapperMethod(cJoin, use);
 
     cField = rb_define_class_under(mNodes, "Field", cNode);
+
+    cSavepoint = rb_define_class_under(mNodes, "Savepoint", cNode);
+    cRollbackSavepoint = rb_define_class_under(mNodes, "RollbackSavepoint", cNode);
 }
 
 /* vim: set noet sws=4 sw=4: */

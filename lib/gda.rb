@@ -92,6 +92,12 @@ module GDA
 
       def visit_GDA_Nodes_Field node
       end
+
+      def visit_GDA_Nodes_Savepoint node
+      end
+
+      def visit_GDA_Nodes_RollbackSavepoint node
+      end
     end
 
     class Each < Visitor
