@@ -70,6 +70,10 @@ module GDA
       def visit_GDA_Nodes_Order node
         accept node.expr
       end
+
+      ## Terminal nodes
+      def visit_GDA_Nodes_Table node
+      end
     end
 
     class Each < Visitor
