@@ -16,6 +16,7 @@ VALUE cUpdate;
 VALUE cTable;
 VALUE cUnknown;
 VALUE cJoin;
+VALUE cField;
 
 #define WrapNode(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
@@ -131,6 +132,9 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_EXPR:
 	    return Data_Wrap_Struct(cExpr, NULL, NULL, part);
 	    break;
+	case GDA_SQL_ANY_SQL_FIELD:
+	    return Data_Wrap_Struct(cField, NULL, NULL, part);
+	    break;
 	case GDA_SQL_ANY_SQL_SELECT_ORDER:
 	    return Data_Wrap_Struct(cOrder, NULL, NULL, part);
 	    break;
@@ -223,6 +227,8 @@ void Init_gda_nodes()
     cJoin = rb_define_class_under(mNodes, "Join", cNode);
     WrapperMethod(cJoin, expr);
     WrapperMethod(cJoin, use);
+
+    cField = rb_define_class_under(mNodes, "Field", cNode);
 }
 
 /* vim: set noet sws=4 sw=4: */
