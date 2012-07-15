@@ -33,6 +33,13 @@ module GDA
         accept node.select
       end
 
+      def visit_GDA_Nodes_Update node
+        accept node.table
+        node.fields_list.each { |n| accept n }
+        node.expr_list.each { |n| accept n }
+        accept node.cond
+      end
+
       def visit_GDA_Nodes_Delete node
         accept node.table
         accept node.cond
