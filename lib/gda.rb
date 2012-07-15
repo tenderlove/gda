@@ -133,7 +133,9 @@ module GDA
 
       def accept node
         super
-        @block.call node if node
+        unless node.nil? || Array === node
+          @block.call node
+        end
       end
     end
   end
