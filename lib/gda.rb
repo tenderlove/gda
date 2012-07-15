@@ -40,6 +40,11 @@ module GDA
         accept node.cond
       end
 
+      def visit_GDA_Nodes_Join node
+        accept node.expr
+        node.use.each { |n| accept n }
+      end
+
       def visit_GDA_Nodes_Delete node
         accept node.table
         accept node.cond

@@ -86,6 +86,9 @@ WrapNode(cUpdate, GdaSqlStatementUpdate, cond);
 WrapNode(cDelete, GdaSqlStatementDelete, table);
 WrapNode(cDelete, GdaSqlStatementDelete, cond);
 
+WrapNode(cJoin, GdaSqlSelectJoin, expr);
+WrapList(cJoin, GdaSqlSelectJoin, use);
+
 static VALUE distinct_p(VALUE self)
 {
     GdaSqlStatementSelect * st;
@@ -218,6 +221,8 @@ void Init_gda_nodes()
     cUnknown = rb_define_class_under(mNodes, "Unknown", cNode);
 
     cJoin = rb_define_class_under(mNodes, "Join", cNode);
+    WrapperMethod(cJoin, expr);
+    WrapperMethod(cJoin, use);
 }
 
 /* vim: set noet sws=4 sw=4: */
