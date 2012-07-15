@@ -5,13 +5,15 @@ module GDA
     attr_reader :parser
 
     class AttributeTest < Visitors::Visitor
-      include Failing
-
       def initialize tc
         @tc = tc
       end
 
       private
+
+      def visit_Array node
+        node.each { |n| accept n }
+      end
 
       def visit_GDA_Nodes_Select node
         assert_respond_to node, :distinct?

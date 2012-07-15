@@ -17,37 +17,39 @@ module GDA
 
       private
 
+      def visit_Array node
+        node.each { |n| accept n }
+      end
+
       def visit_GDA_Nodes_Select node
         accept node.distinct_expr
-        node.expr_list.each { |n| accept n }
+        accept node.expr_list
         accept node.from
         accept node.where_cond
-        node.group_by.each { |n| accept n }
+        accept node.group_by
         accept node.having_cond
-        node.order_by.each { |n| accept n }
+        accept node.order_by
         accept node.limit_count
         accept node.limit_offset
       end
 
       def visit_GDA_Nodes_Insert node
         accept node.table
-        node.fields_list.each { |n| accept n }
-        node.values_list.each { |l|
-          l.each { |n| accept n }
-        }
+        accept node.fields_list
+        accept node.values_list
         accept node.select
       end
 
       def visit_GDA_Nodes_Update node
         accept node.table
-        node.fields_list.each { |n| accept n }
-        node.expr_list.each { |n| accept n }
+        accept node.fields_list
+        accept node.expr_list
         accept node.cond
       end
 
       def visit_GDA_Nodes_Join node
         accept node.expr
-        node.use.each { |n| accept n }
+        accept node.use
       end
 
       def visit_GDA_Nodes_Delete node
@@ -68,8 +70,8 @@ module GDA
       end
 
       def visit_GDA_Nodes_From node
-        node.targets.each { |n| accept n }
-        node.joins.each { |n| accept n }
+        accept node.targets
+        accept node.joins
       end
 
       def visit_GDA_Nodes_Target node
@@ -77,11 +79,11 @@ module GDA
       end
 
       def visit_GDA_Nodes_Operation node
-        node.operands.each { |n| accept n }
+        accept node.operands
       end
 
       def visit_GDA_Nodes_Function node
-        node.args_list.each { |n| accept n }
+        accept node.args_list
       end
 
       def visit_GDA_Nodes_Order node
@@ -89,7 +91,7 @@ module GDA
       end
 
       def visit_GDA_Nodes_Unknown node
-        node.expressions.each { |n| accept n }
+        accept node.expressions
       end
 
       ## Terminal nodes
