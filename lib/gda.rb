@@ -8,7 +8,10 @@ module GDA
       def accept node
         return unless node
 
-        method = "visit_" + node.class.name.split('::').join('_')
+        method = METHOD_CACHE.fetch(node.class) { |k|
+          "visit_" + k.name.split('::').join('_')
+        }
+
         send method, node
       end
 
@@ -109,6 +112,12 @@ module GDA
       end
 
       def visit_GDA_Nodes_Commit node
+      end
+
+      METHOD_CACHE = {}
+      private_instance_methods.grep(/^visit_(.*)$/) do |method|
+        k = $1.split('_').inject(Object) { |klass,c| klass.const_get c }
+        METHOD_CACHE[k] = method
       end
     end
 
