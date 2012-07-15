@@ -24,6 +24,17 @@ VALUE cBegin;
 VALUE cRollback;
 VALUE cCommit;
 
+#define WrapBoolean(klass, type, lname) \
+    static VALUE rb_##klass##_##lname(VALUE self) \
+{ \
+    type *st;\
+    Data_Get_Struct(self, type, st); \
+    if (st->lname) \
+      return Qtrue; \
+    else \
+      return Qfalse; \
+}
+
 #define WrapString(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
 { \
@@ -102,6 +113,8 @@ WrapList(cFunction, GdaSqlFunction, args_list);
 WrapString(cFunction, GdaSqlFunction, function_name);
 
 WrapNode(cOrder, GdaSqlSelectOrder, expr);
+WrapBoolean(cOrder, GdaSqlSelectOrder, asc);
+WrapString(cOrder, GdaSqlSelectOrder, collation_name);
 
 WrapNode(cInsert, GdaSqlStatementInsert, table);
 WrapList(cInsert, GdaSqlStatementInsert, fields_list);
@@ -299,6 +312,8 @@ void Init_gda_nodes()
 
     cOrder = rb_define_class_under(mNodes, "Order", cNode);
     WrapperMethod(cOrder, expr);
+    WrapperMethod(cOrder, asc);
+    WrapperMethod(cOrder, collation_name);
 
     cInsert = rb_define_class_under(mNodes, "Insert", cNode);
     WrapperMethod(cInsert, table);

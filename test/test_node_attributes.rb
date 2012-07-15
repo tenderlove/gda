@@ -67,6 +67,16 @@ module GDA
         super
       end
 
+      def visit_GDA_Nodes_Delete node
+        super
+      end
+
+      def visit_GDA_Nodes_Order node
+        assert_boolean node, :asc
+        assert_string node, :collation_name
+        super
+      end
+
       def visit_GDA_Nodes_Field node
         assert_string node, :field_name
         super
@@ -82,6 +92,15 @@ module GDA
         assert_string node, :table_name
         assert_string node, :as
         super
+      end
+
+      def assert_boolean node, m
+        assert_respond_to node, m
+        if node.send(m)
+          assert_equal(true, node.send(m))
+        else
+          assert_equal(false, node.send(m))
+        end
       end
 
       def assert_string node, m
