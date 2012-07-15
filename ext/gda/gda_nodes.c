@@ -95,6 +95,7 @@ WrapString(cTarget, GdaSqlSelectTarget, table_name);
 WrapString(cTarget, GdaSqlSelectTarget, as);
 
 WrapList(cFunction, GdaSqlFunction, args_list);
+WrapString(cFunction, GdaSqlFunction, function_name);
 
 WrapNode(cOrder, GdaSqlSelectOrder, expr);
 
@@ -277,6 +278,7 @@ void Init_gda_nodes()
 
     cFunction = rb_define_class_under(mNodes, "Function", cNode);
     WrapperMethod(cFunction, args_list);
+    WrapperMethod(cFunction, function_name);
 
     cOrder = rb_define_class_under(mNodes, "Order", cNode);
     WrapperMethod(cOrder, expr);

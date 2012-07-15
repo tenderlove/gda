@@ -27,11 +27,6 @@ module GDA
 
       def visit_GDA_Nodes_Insert node
         assert_string node, :on_conflict
-        assert_respond_to node, :values_list
-
-        node.values_list.each do |v|
-          assert_kind_of String, v
-        end
         super
       end
 
@@ -54,6 +49,16 @@ module GDA
       end
 
       def visit_GDA_Nodes_From node
+        super
+      end
+
+      def visit_GDA_Nodes_Table node
+        assert_string node, :table_name
+        super
+      end
+
+      def visit_GDA_Nodes_Update node
+        assert_string node, :on_conflict
         super
       end
 
