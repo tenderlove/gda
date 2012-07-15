@@ -11,7 +11,7 @@ module GDA
 
       db_file = File.join File.dirname(__FILE__), 'sqllog.sqlite3'
       db      = SQLite3::Database.new db_file
-      @rails_sql = db.execute('SELECT * FROM sqllog').map(&:first)
+      @@rails_sql = db.execute('SELECT * FROM sqllog').map(&:first)
     end
   end
 end
