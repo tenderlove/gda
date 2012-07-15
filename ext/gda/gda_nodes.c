@@ -90,6 +90,8 @@ WrapNode(cDelete, GdaSqlStatementDelete, cond);
 WrapNode(cJoin, GdaSqlSelectJoin, expr);
 WrapList(cJoin, GdaSqlSelectJoin, use);
 
+WrapList(cUnknown, GdaSqlStatementUnknown, expressions);
+
 static VALUE distinct_p(VALUE self)
 {
     GdaSqlStatementSelect * st;
@@ -223,6 +225,7 @@ void Init_gda_nodes()
     cTable = rb_define_class_under(mNodes, "Table", cNode);
 
     cUnknown = rb_define_class_under(mNodes, "Unknown", cNode);
+    WrapperMethod(cUnknown, expressions);
 
     cJoin = rb_define_class_under(mNodes, "Join", cNode);
     WrapperMethod(cJoin, expr);

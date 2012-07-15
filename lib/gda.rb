@@ -83,6 +83,10 @@ module GDA
         accept node.expr
       end
 
+      def visit_GDA_Nodes_Unknown node
+        node.expressions.each { |n| accept n }
+      end
+
       ## Terminal nodes
       def visit_GDA_Nodes_Table node
       end
