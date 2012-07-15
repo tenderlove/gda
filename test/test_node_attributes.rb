@@ -67,6 +67,11 @@ module GDA
         super
       end
 
+      def visit_GDA_Nodes_Field node
+        assert_string node, :field_name
+        super
+      end
+
       def visit_GDA_Nodes_Target node
         assert_string node, :table_name
         assert_string node, :as

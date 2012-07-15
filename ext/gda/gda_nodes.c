@@ -64,6 +64,8 @@ VALUE cCommit;
 
 WrapString(cTable, GdaSqlTable, table_name);
 
+WrapString(cField, GdaSqlField, field_name);
+
 WrapNode(cSelect, GdaSqlStatementSelect, distinct_expr);
 WrapList(cSelect, GdaSqlStatementSelect, expr_list);
 WrapNode(cSelect, GdaSqlStatementSelect, from);
@@ -313,6 +315,7 @@ void Init_gda_nodes()
     WrapperMethod(cJoin, use);
 
     cField = rb_define_class_under(mNodes, "Field", cNode);
+    WrapperMethod(cField, field_name);
 
     cBegin = rb_define_class_under(mNodes, "Begin", cNode);
     cRollback = rb_define_class_under(mNodes, "Rollback", cNode);
