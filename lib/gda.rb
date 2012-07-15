@@ -140,6 +140,8 @@ module GDA
 
   module Nodes
     class Node
+      include Enumerable
+
       def each &block
         Visitors::Each.new(block).accept self
       end
