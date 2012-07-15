@@ -15,6 +15,7 @@ VALUE cDelete;
 VALUE cUpdate;
 VALUE cTable;
 VALUE cUnknown;
+VALUE cJoin;
 
 #define WrapNode(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
@@ -142,6 +143,9 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_SQL_SELECT_TARGET:
 	    return Data_Wrap_Struct(cTarget, NULL, NULL, part);
 	    break;
+	case GDA_SQL_ANY_SQL_SELECT_JOIN:
+	    return Data_Wrap_Struct(cJoin, NULL, NULL, part);
+	    break;
 	default:
 	    rb_raise(rb_eRuntimeError, "unknown node type: %d\n", part->type);
 	    return Qnil;
@@ -212,6 +216,8 @@ void Init_gda_nodes()
     cTable = rb_define_class_under(mNodes, "Table", cNode);
 
     cUnknown = rb_define_class_under(mNodes, "Unknown", cNode);
+
+    cJoin = rb_define_class_under(mNodes, "Join", cNode);
 }
 
 /* vim: set noet sws=4 sw=4: */
