@@ -86,6 +86,9 @@ module GDA
       ## Terminal nodes
       def visit_GDA_Nodes_Table node
       end
+
+      def visit_GDA_Nodes_Field node
+      end
     end
 
     class Each < Visitor
