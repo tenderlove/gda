@@ -32,6 +32,9 @@ module GDA
       def visit_GDA_Nodes_Insert node
         accept node.table
         node.fields_list.each { |n| accept n }
+        node.values_list.each { |l|
+          l.each { |n| accept n }
+        }
         accept node.select
       end
 

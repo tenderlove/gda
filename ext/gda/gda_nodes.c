@@ -91,6 +91,8 @@ WrapList(cFrom, GdaSqlSelectFrom, joins);
 WrapList(cOperation, GdaSqlOperation, operands);
 
 WrapNode(cTarget, GdaSqlSelectTarget, expr);
+WrapString(cTarget, GdaSqlSelectTarget, table_name);
+WrapString(cTarget, GdaSqlSelectTarget, as);
 
 WrapList(cFunction, GdaSqlFunction, args_list);
 
@@ -99,6 +101,7 @@ WrapNode(cOrder, GdaSqlSelectOrder, expr);
 WrapNode(cInsert, GdaSqlStatementInsert, table);
 WrapList(cInsert, GdaSqlStatementInsert, fields_list);
 WrapNode(cInsert, GdaSqlStatementInsert, select);
+WrapString(cInsert, GdaSqlStatementInsert, on_conflict);
 
 WrapNode(cUpdate, GdaSqlStatementUpdate, table);
 WrapList(cUpdate, GdaSqlStatementUpdate, fields_list);
@@ -200,6 +203,32 @@ VALUE WrapAnyPart(GdaSqlAnyPart *part)
     }
 }
 
+static VALUE rb_cInsert_values_list(VALUE self)
+{
+    GdaSqlStatementInsert * st;
+    GSList * list;
+    VALUE array;
+
+    Data_Get_Struct(self, GdaSqlStatementInsert, st);
+
+    array = rb_ary_new();
+    list = st->values_list;
+    while(list) {
+	VALUE iarray = rb_ary_new();
+	GSList * inner = (GSList *)list->data;
+
+	while(inner) {
+	  rb_ary_push(iarray, WrapAnyPart((GdaSqlAnyPart *)inner->data));
+	  inner = inner->next;
+	}
+
+	rb_ary_push(array, iarray);
+	list = list->next;
+    }
+
+    return array;
+}
+
 void Init_gda_nodes()
 {
     mNodes = rb_define_module_under(mGDA, "Nodes");
@@ -243,6 +272,8 @@ void Init_gda_nodes()
 
     cTarget = rb_define_class_under(mNodes, "Target", cNode);
     WrapperMethod(cTarget, expr);
+    WrapperMethod(cTarget, table_name);
+    WrapperMethod(cTarget, as);
 
     cFunction = rb_define_class_under(mNodes, "Function", cNode);
     WrapperMethod(cFunction, args_list);
@@ -252,8 +283,10 @@ void Init_gda_nodes()
 
     cInsert = rb_define_class_under(mNodes, "Insert", cNode);
     WrapperMethod(cInsert, table);
+    WrapperMethod(cInsert, values_list);
     WrapperMethod(cInsert, fields_list);
     WrapperMethod(cInsert, select);
+    WrapperMethod(cInsert, on_conflict);
 
     cDelete = rb_define_class_under(mNodes, "Delete", cNode);
     WrapperMethod(cDelete, table);

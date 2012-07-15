@@ -48,6 +48,21 @@ module GDA
         super
       end
 
+      def visit_GDA_Nodes_Function node
+        assert_string node, :function_name
+        super
+      end
+
+      def visit_GDA_Nodes_From node
+        super
+      end
+
+      def visit_GDA_Nodes_Target node
+        assert_string node, :table_name
+        assert_string node, :as
+        super
+      end
+
       def assert_string node, m
         assert_respond_to node, m
         assert_kind_of(String, node.send(m)) if node.send(m)
