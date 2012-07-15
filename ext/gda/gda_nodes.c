@@ -133,6 +133,7 @@ WrapNode(cUpdate, GdaSqlStatementUpdate, table);
 WrapList(cUpdate, GdaSqlStatementUpdate, fields_list);
 WrapList(cUpdate, GdaSqlStatementUpdate, expr_list);
 WrapNode(cUpdate, GdaSqlStatementUpdate, cond);
+WrapString(cUpdate, GdaSqlStatementUpdate, on_conflict);
 
 WrapNode(cDelete, GdaSqlStatementDelete, table);
 WrapNode(cDelete, GdaSqlStatementDelete, cond);
@@ -352,6 +353,7 @@ void Init_gda_nodes()
     WrapperMethod(cUpdate, fields_list);
     WrapperMethod(cUpdate, expr_list);
     WrapperMethod(cUpdate, cond);
+    WrapperMethod(cUpdate, on_conflict);
 
     cTable = rb_define_class_under(mNodes, "Table", cNode);
     WrapperMethod(cTable, table_name);
