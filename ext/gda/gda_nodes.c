@@ -105,7 +105,6 @@ WrapNode(cExpr, GdaSqlExpr, cond);
 WrapNode(cExpr, GdaSqlExpr, select);
 WrapNode(cExpr, GdaSqlExpr, case_s);
 WrapNode(cExpr, GdaSqlExpr, param_spec);
-WrapString(cExpr, GdaSqlExpr, value);
 WrapString(cExpr, GdaSqlExpr, cast_as);
 
 WrapList(cFrom, GdaSqlSelectFrom, targets);
@@ -361,6 +360,18 @@ static VALUE rb_st_trans_name(VALUE self)
     return Qnil;
 }
 
+static VALUE rb_cExpr_value(VALUE self)
+{
+    GdaSqlExpr * st;
+    GValue * val;
+
+    Data_Get_Struct(self, GdaSqlExpr, st);
+
+    val = st->value;
+
+    return rb_str_new2(gda_value_stringify(val));
+}
+
 void Init_gda_nodes()
 {
     mNodes = rb_define_module_under(mGDA, "Nodes");
@@ -392,8 +403,8 @@ void Init_gda_nodes()
     WrapperMethod(cExpr, select);
     WrapperMethod(cExpr, case_s);
     WrapperMethod(cExpr, param_spec);
-    WrapperMethod(cExpr, value);
     WrapperMethod(cExpr, cast_as);
+    WrapperMethod(cExpr, value);
 
     cFrom = rb_define_class_under(mNodes, "From", cNode);
     WrapperMethod(cFrom, targets);
