@@ -23,6 +23,8 @@ parser.
     p node
   end
 
+  puts stmt.ast.to_dot
+
 == HACKING:
 
     $ brew install libgda
