@@ -7,7 +7,7 @@ module GDA
         @block = block
       end
 
-      def accept node
+      def visit node
         super
         unless node.nil? || Array === node
           @block.call node
