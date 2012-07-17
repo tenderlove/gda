@@ -16,6 +16,7 @@ module GDA
         puts "digraph G { graph [rankdir = \"TB\"];"
         super
         puts "}"
+        @buffer.string
       end
 
       private
@@ -44,10 +45,6 @@ node<%= node.object_id %> [shape="invhouse", color=gray, fontcolor=gray, label=l
       eoerb
 
       def add_node node, attrs = []
-        values = attrs.map { |a|
-          [a, node.send(a)].join '='
-        }
-
         puts NODE.result binding
         link_node node
       end
@@ -59,11 +56,12 @@ node<%= node.object_id %> [shape="invhouse", color=gray, fontcolor=gray, label=l
 
       def add_list node
         puts LIST.result binding
+        link_node node
       end
 
       def visit_edge node, edge
         stack.push [node, edge]
-        accept node.send edge
+        visit node.send edge
         stack.pop
       end
 
@@ -73,7 +71,7 @@ node<%= node.object_id %> [shape="invhouse", color=gray, fontcolor=gray, label=l
         add_list node
         node.each_with_index { |n, i|
           stack.push [node, i]
-          accept n
+          visit n
           stack.pop
         }
       end
