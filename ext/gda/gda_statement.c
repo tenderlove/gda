@@ -25,12 +25,25 @@ static VALUE ast(VALUE self)
     return WrapAnyPart(GDA_SQL_ANY_PART(sqlst->contents));
 }
 
+static VALUE sql(VALUE self)
+{
+    GdaStatement * stmt;
+    GdaSqlStatement * sqlst;
+
+    Data_Get_Struct(self, GdaStatement, stmt);
+
+    g_object_get(G_OBJECT(stmt), "structure", &sqlst, NULL);
+
+    return rb_str_new2(sqlst->sql);
+}
+
 void Init_gda_statement()
 {
     cStatement = rb_define_class_under(mSQL, "Statement", rb_cObject);
 
     rb_define_method(cStatement, "serialize", serialize, 0);
     rb_define_method(cStatement, "ast", ast, 0);
+    rb_define_method(cStatement, "sql", sql, 0);
 }
 
 /* vim: set noet sws=4 sw=4: */
