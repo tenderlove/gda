@@ -11,5 +11,10 @@ module GDA
     def test_parses
       assert parser.parse('SELECT * FROM FOO')
     end
+
+    def test_providers
+      assert_kind_of Array, GDA::SQL.providers
+      assert_operator GDA::SQL.providers.length, :>, 0
+    end
   end
 end

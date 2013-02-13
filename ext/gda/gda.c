@@ -30,6 +30,35 @@ static VALUE parse(VALUE self, VALUE sql)
     return Data_Wrap_Struct(cStatement, NULL, NULL, stmt);
 }
 
+static VALUE providers(VALUE klass)
+{
+    GdaDataModel * providers;
+    gint i, nb;
+    VALUE list;
+
+    list = rb_ary_new();
+    providers = gda_config_list_providers();
+    nb = gda_data_model_get_n_rows(providers);
+
+    for (i = 0; i < nb; i++) {
+	const gchar *pname;
+	const GValue *cvalue;
+
+	cvalue = gda_data_model_get_value_at(providers, 0, i, NULL);
+
+	if (!cvalue)
+	    rb_raise(rb_eRuntimeError, "can't load provider");
+
+	pname = g_value_get_string(cvalue);
+
+	rb_ary_push(list, rb_str_new2(pname));
+    }
+
+    g_object_unref(providers);
+
+    return list;
+}
+
 void Init_gda()
 {
 
@@ -43,6 +72,8 @@ void Init_gda()
     rb_define_alloc_func(cParser, allocate);
 
     rb_define_method(cParser, "parse", parse, 1);
+
+    rb_define_singleton_method(mSQL, "providers", providers, 0);
 
     gda_init();
 }
