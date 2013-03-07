@@ -59,6 +59,22 @@ static VALUE providers(VALUE klass)
     return list;
 }
 
+static VALUE sql_identifier_split(VALUE klass, VALUE string)
+{
+    gchar ** list;
+    int i;
+    VALUE ids;
+
+    ids = rb_ary_new();
+    list = gda_sql_identifier_split(StringValuePtr(string));
+    for (i = 0; list[i]; i++) {
+	rb_ary_push(ids, rb_str_new2(list[i]));
+    }
+    g_strfreev(list);
+
+    return ids;
+}
+
 void Init_gda()
 {
 
@@ -75,6 +91,7 @@ void Init_gda()
     rb_define_method(cParser, "parse", parse, 1);
 
     rb_define_singleton_method(mSQL, "providers", providers, 0);
+    rb_define_singleton_method(mGDA, "sql_identifier_split", sql_identifier_split, 1);
 
     gda_init();
 }

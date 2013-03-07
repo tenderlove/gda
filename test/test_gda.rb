@@ -9,6 +9,10 @@ module GDA
       @parser = GDA::SQL::Parser.new
     end
 
+    def test_split
+      assert_equal ['test', '"table"'], GDA.sql_identifier_split("test.\"table\"")
+    end
+
     def test_parses
       assert parser.parse('SELECT * FROM FOO')
     end
