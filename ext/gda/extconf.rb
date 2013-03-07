@@ -2,6 +2,8 @@ require 'mkmf'
 
 # :stopdoc:
 
+ENV['PKG_CONFIG_PATH']= '/usr/local/Library/ENV/pkgconfig/mountain_lion'
+
 dir_config 'libgda'
 
 def asplode missing
