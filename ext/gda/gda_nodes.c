@@ -106,6 +106,7 @@ WrapNode(cExpr, GdaSqlExpr, select);
 WrapNode(cExpr, GdaSqlExpr, case_s);
 WrapNode(cExpr, GdaSqlExpr, param_spec);
 WrapString(cExpr, GdaSqlExpr, cast_as);
+WrapBoolean(cExpr, GdaSqlExpr, value_is_ident);
 
 WrapList(cFrom, GdaSqlSelectFrom, targets);
 WrapList(cFrom, GdaSqlSelectFrom, joins);
@@ -405,6 +406,7 @@ void Init_gda_nodes()
     WrapperMethod(cExpr, param_spec);
     WrapperMethod(cExpr, cast_as);
     WrapperMethod(cExpr, value);
+    WrapperMethod(cExpr, value_is_ident);
 
     cFrom = rb_define_class_under(mNodes, "From", cNode);
     WrapperMethod(cFrom, targets);

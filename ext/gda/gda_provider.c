@@ -41,12 +41,21 @@ static VALUE parser(VALUE self)
     return Data_Wrap_Struct(cParser, NULL, NULL, parser);
 }
 
+static VALUE quote_str(VALUE self, VALUE str)
+{
+    GdaServerProvider * pr;
+
+    Data_Get_Struct(self, GdaServerProvider, pr);
+    return rb_str_new2(gda_sql_identifier_quote(StringValuePtr(str), NULL, pr, TRUE, TRUE));
+}
+
 void Init_gda_provider()
 {
     cProvider = rb_define_class_under(mSQL, "Provider", rb_cObject);
     rb_define_singleton_method(cProvider, "find", find, 1);
     rb_define_method(cProvider, "name", name, 0);
     rb_define_method(cProvider, "parser", parser, 0);
+    rb_define_method(cProvider, "quote", quote_str, 1);
 }
 
 /* vim: set noet sws=4 sw=4: */
