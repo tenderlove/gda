@@ -13,5 +13,6 @@ extern VALUE cParser;
 
 #include <gda_statement.h>
 #include <gda_nodes.h>
+#include <gda_provider.h>
 
 #endif

@@ -67,6 +67,7 @@ void Init_gda()
 
     Init_gda_statement();
     Init_gda_nodes();
+    Init_gda_provider();
     cParser = rb_define_class_under(mSQL, "Parser", rb_cObject);
 
     rb_define_alloc_func(cParser, allocate);

@@ -16,5 +16,9 @@ module GDA
       assert_kind_of Array, GDA::SQL.providers
       assert_operator GDA::SQL.providers.length, :>, 0
     end
+
+    def test_get_provider
+      assert GDA::SQL::Provider.find SQL.providers.first
+    end
   end
 end
