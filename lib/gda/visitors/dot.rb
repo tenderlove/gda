@@ -38,7 +38,7 @@ node<%= node.object_id %> [shape="plaintext" label=<
 <TR><TD COLSPAN="2"><%= node.class %></TD></TR>
 <% attrs.each do |attr| %>
   <% next if node.send(attr).nil? %>
-  <TR><TD><%= attr %></TD><TD><%= node.send(attr) %></TD></TR>
+  <TR><TD><%= ERB::Util.h attr %></TD><TD><%= ERB::Util.h node.send(attr) %></TD></TR>
 <% end %>
 </TABLE>>];
       eoerb
