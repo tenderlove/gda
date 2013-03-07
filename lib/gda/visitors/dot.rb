@@ -12,10 +12,13 @@ module GDA
         @buffer = io
       end
 
+      HEADER = "digraph G { graph [rankdir = \"TB\"];"
+      FOOTER = "}"
+
       def accept node
-        puts "digraph G { graph [rankdir = \"TB\"];"
+        puts HEADER
         super
-        puts "}"
+        puts FOOTER
         @buffer.string
       end
 
@@ -49,9 +52,11 @@ node<%= node.object_id %> [shape="invhouse", color=gray, fontcolor=gray, label=l
         link_node node
       end
 
+      FMT = "node%d -> node%d [ label = \"%s\" ];\n"
+
       def link_node node
         return if stack.empty?
-        printf "node%d -> node%d [ label = \"%s\" ];\n", stack.last.first.object_id, node.object_id, stack.last.last
+        printf FMT, stack.last.first.object_id, node.object_id, stack.last.last
       end
 
       def add_list node

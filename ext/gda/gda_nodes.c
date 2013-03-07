@@ -58,8 +58,10 @@ VALUE cCommit;
     static VALUE rb_##klass##_##lname(VALUE self) \
 { \
     type *st;\
+    VALUE stmt;\
     Data_Get_Struct(self, type, st); \
-    return WrapAnyPart((GdaSqlAnyPart *)st->lname); \
+    stmt = rb_iv_get(self, "stmt"); \
+    return WrapAnyPart(stmt, (GdaSqlAnyPart *)st->lname); \
 }
 
 #define WrapList(klass, type, lname) \
@@ -68,11 +70,13 @@ VALUE cCommit;
     type *ptr; \
     GSList *list; \
     VALUE rb_list; \
+    VALUE stmt; \
     Data_Get_Struct(self, type, ptr);\
+    stmt = rb_iv_get(self, "stmt"); \
     rb_list = rb_ary_new(); \
     list = ptr->lname; \
     while(list) { \
-	rb_ary_push(rb_list, WrapAnyPart((GdaSqlAnyPart *)list->data)); \
+	rb_ary_push(rb_list, WrapAnyPart(stmt, (GdaSqlAnyPart *)list->data)); \
 	list = list->next; \
     } \
     return rb_list; \
@@ -156,74 +160,81 @@ static VALUE distinct_p(VALUE self)
     return Qfalse;
 }
 
-VALUE WrapAnyPart(GdaSqlAnyPart *part)
+static VALUE Wrap(VALUE stmt, VALUE klass, GdaSqlAnyPart *part)
+{
+    VALUE obj = Data_Wrap_Struct(klass, NULL, NULL, part);
+    rb_iv_set(obj, "stmt", stmt);
+    return obj;
+}
+
+VALUE WrapAnyPart(VALUE stmt, GdaSqlAnyPart *part)
 {
     if (!part)
 	return Qnil;
 
     switch(part->type) {
 	case GDA_SQL_ANY_STMT_SELECT:
-	    return Data_Wrap_Struct(cSelect, NULL, NULL, part);
+	    return Wrap(stmt, cSelect, part);
 	    break;
 	case GDA_SQL_ANY_STMT_INSERT:
-	    return Data_Wrap_Struct(cInsert, NULL, NULL, part);
+	    return Wrap(stmt, cInsert, part);
 	    break;
 	case GDA_SQL_ANY_STMT_UPDATE:
-	    return Data_Wrap_Struct(cUpdate, NULL, NULL, part);
+	    return Wrap(stmt, cUpdate, part);
 	    break;
 	case GDA_SQL_ANY_STMT_DELETE:
-	    return Data_Wrap_Struct(cDelete, NULL, NULL, part);
+	    return Wrap(stmt, cDelete, part);
 	    break;
 	case GDA_SQL_ANY_STMT_BEGIN:
-	    return Data_Wrap_Struct(cBegin, NULL, NULL, part);
+	    return Wrap(stmt, cBegin, part);
 	    break;
 	case GDA_SQL_ANY_STMT_ROLLBACK:
-	    return Data_Wrap_Struct(cRollback, NULL, NULL, part);
+	    return Wrap(stmt, cRollback, part);
 	    break;
 	case GDA_SQL_ANY_STMT_COMMIT:
-	    return Data_Wrap_Struct(cCommit, NULL, NULL, part);
+	    return Wrap(stmt, cCommit, part);
 	    break;
 	case GDA_SQL_ANY_STMT_SAVEPOINT:
-	    return Data_Wrap_Struct(cSavepoint, NULL, NULL, part);
+	    return Wrap(stmt, cSavepoint, part);
 	    break;
 	case GDA_SQL_ANY_STMT_ROLLBACK_SAVEPOINT:
-	    return Data_Wrap_Struct(cRollbackSavepoint, NULL, NULL, part);
+	    return Wrap(stmt, cRollbackSavepoint, part);
 	    break;
 	case GDA_SQL_ANY_STMT_DELETE_SAVEPOINT:
-	    return Data_Wrap_Struct(cDeleteSavepoint, NULL, NULL, part);
+	    return Wrap(stmt, cDeleteSavepoint, part);
 	    break;
 	case GDA_SQL_ANY_STMT_UNKNOWN:
-	    return Data_Wrap_Struct(cUnknown, NULL, NULL, part);
+	    return Wrap(stmt, cUnknown, part);
 	    break;
 	case GDA_SQL_ANY_SQL_SELECT_FROM:
-	    return Data_Wrap_Struct(cFrom, NULL, NULL, part);
+	    return Wrap(stmt, cFrom, part);
 	    break;
 	case GDA_SQL_ANY_SQL_SELECT_FIELD:
-	    return Data_Wrap_Struct(cSelectField, NULL, NULL, part);
+	    return Wrap(stmt, cSelectField, part);
 	    break;
 	case GDA_SQL_ANY_EXPR:
-	    return Data_Wrap_Struct(cExpr, NULL, NULL, part);
+	    return Wrap(stmt, cExpr, part);
 	    break;
 	case GDA_SQL_ANY_SQL_FIELD:
-	    return Data_Wrap_Struct(cField, NULL, NULL, part);
+	    return Wrap(stmt, cField, part);
 	    break;
 	case GDA_SQL_ANY_SQL_SELECT_ORDER:
-	    return Data_Wrap_Struct(cOrder, NULL, NULL, part);
+	    return Wrap(stmt, cOrder, part);
 	    break;
 	case GDA_SQL_ANY_SQL_TABLE:
-	    return Data_Wrap_Struct(cTable, NULL, NULL, part);
+	    return Wrap(stmt, cTable, part);
 	    break;
 	case GDA_SQL_ANY_SQL_OPERATION:
-	    return Data_Wrap_Struct(cOperation, NULL, NULL, part);
+	    return Wrap(stmt, cOperation, part);
 	    break;
 	case GDA_SQL_ANY_SQL_FUNCTION:
-	    return Data_Wrap_Struct(cFunction, NULL, NULL, part);
+	    return Wrap(stmt, cFunction, part);
 	    break;
 	case GDA_SQL_ANY_SQL_SELECT_TARGET:
-	    return Data_Wrap_Struct(cTarget, NULL, NULL, part);
+	    return Wrap(stmt, cTarget, part);
 	    break;
 	case GDA_SQL_ANY_SQL_SELECT_JOIN:
-	    return Data_Wrap_Struct(cJoin, NULL, NULL, part);
+	    return Wrap(stmt, cJoin, part);
 	    break;
 	default:
 	    rb_raise(rb_eRuntimeError, "unknown node type: %d\n", part->type);
@@ -236,8 +247,11 @@ static VALUE rb_cInsert_values_list(VALUE self)
     GdaSqlStatementInsert * st;
     GSList * list;
     VALUE array;
+    VALUE stmt;
 
     Data_Get_Struct(self, GdaSqlStatementInsert, st);
+
+    stmt = rb_iv_get(self, "stmt");
 
     array = rb_ary_new();
     list = st->values_list;
@@ -246,7 +260,7 @@ static VALUE rb_cInsert_values_list(VALUE self)
 	GSList * inner = (GSList *)list->data;
 
 	while(inner) {
-	  rb_ary_push(iarray, WrapAnyPart((GdaSqlAnyPart *)inner->data));
+	  rb_ary_push(iarray, WrapAnyPart(stmt, (GdaSqlAnyPart *)inner->data));
 	  inner = inner->next;
 	}
 

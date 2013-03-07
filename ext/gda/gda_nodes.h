@@ -3,7 +3,7 @@
 
 void Init_gda_nodes();
 
-VALUE WrapAnyPart(GdaSqlAnyPart *part);
+VALUE WrapAnyPart(VALUE stmt, GdaSqlAnyPart *part);
 
 #endif
 

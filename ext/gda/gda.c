@@ -27,7 +27,7 @@ static VALUE parse(VALUE self, VALUE sql)
 	rb_raise(rb_eRuntimeError, "error parsing sql");
     }
 
-    return Data_Wrap_Struct(cStatement, NULL, NULL, stmt);
+    return Data_Wrap_Struct(cStatement, NULL, g_object_unref, stmt);
 }
 
 static VALUE providers(VALUE klass)

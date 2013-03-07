@@ -6,6 +6,18 @@ require 'gda/visitors/max_depth'
 module GDA
   VERSION = '1.0.0'
 
+  module SQL
+    class Statement
+      def ast
+        structure.ast
+      end
+
+      def sql
+        structure.sql
+      end
+    end
+  end
+
   module Nodes
     class Node
       include Enumerable
