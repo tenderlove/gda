@@ -38,7 +38,7 @@ static VALUE parser(VALUE self)
     if (!parser)
 	rb_raise(rb_eRuntimeError, "zomglol");
 
-    return Data_Wrap_Struct(cParser, NULL, NULL, parser);
+    return Data_Wrap_Struct(cParser, NULL, g_object_unref, parser);
 }
 
 static VALUE quote_str(VALUE self, VALUE str)

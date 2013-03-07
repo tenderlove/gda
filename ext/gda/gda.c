@@ -9,7 +9,7 @@ static VALUE allocate(VALUE klass)
     GdaSqlParser * parser;
 
     parser = gda_sql_parser_new();
-    return Data_Wrap_Struct(klass, NULL, NULL, parser);
+    return Data_Wrap_Struct(klass, NULL, g_object_unref, parser);
 }
 
 static VALUE parse(VALUE self, VALUE sql)
