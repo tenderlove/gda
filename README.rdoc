@@ -10,7 +10,6 @@ parser.
 == FEATURES/PROBLEMS:
 
 * Not done yet
-* Leaks memory
 * Do not use
 
 == SYNOPSIS:
