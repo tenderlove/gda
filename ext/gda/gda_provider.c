@@ -13,14 +13,17 @@ static VALUE name(VALUE self)
 static VALUE find(VALUE klass, VALUE string)
 {
     GdaServerProvider * pr;
-    GError *error;
+    GError * error = NULL;
 
     pr = gda_config_get_provider(StringValuePtr(string), &error);
 
     if (pr)
 	return Data_Wrap_Struct(klass, NULL, NULL, pr);
-    else
+    else {
+	/* FIXME: should actually raise an error here. */
+	g_error_free(error);
 	return Qnil;
+    }
 }
 
 static VALUE parser(VALUE self)
@@ -31,6 +34,9 @@ static VALUE parser(VALUE self)
     Data_Get_Struct(self, GdaServerProvider, pr);
 
     parser = gda_server_provider_create_parser(pr, NULL);
+
+    if (!parser)
+	rb_raise(rb_eRuntimeError, "zomglol");
 
     return Data_Wrap_Struct(cParser, NULL, NULL, parser);
 }
