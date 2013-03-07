@@ -26,5 +26,15 @@ module GDA
       provider = SQL::Provider.find name
       assert_equal name, provider.name
     end
+
+    def test_pg_parser
+      provider = SQL::Provider.find "PostgreSQL"
+      assert provider.parser.parse 'INSERT INTO "accounts" ("credit_limit", "firm_id", "firm_name") VALUES ($1, $2, $3) RETURNING "id"'
+    end
+
+    def test_mysql_parser
+      provider = SQL::Provider.find "MySQL"
+      assert provider.parser.parse 'SELECT `topics`.* FROM `topics` WHERE `topics`.`id` = 147 LIMIT 1'
+    end
   end
 end

@@ -23,11 +23,24 @@ static VALUE find(VALUE klass, VALUE string)
 	return Qnil;
 }
 
+static VALUE parser(VALUE self)
+{
+    GdaSqlParser * parser;
+    GdaServerProvider * pr;
+
+    Data_Get_Struct(self, GdaServerProvider, pr);
+
+    parser = gda_server_provider_create_parser(pr, NULL);
+
+    return Data_Wrap_Struct(cParser, NULL, NULL, parser);
+}
+
 void Init_gda_provider()
 {
     cProvider = rb_define_class_under(mSQL, "Provider", rb_cObject);
     rb_define_singleton_method(cProvider, "find", find, 1);
     rb_define_method(cProvider, "name", name, 0);
+    rb_define_method(cProvider, "parser", parser, 0);
 }
 
 /* vim: set noet sws=4 sw=4: */
