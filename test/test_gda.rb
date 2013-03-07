@@ -35,7 +35,7 @@ module GDA
 
     def test_mysql_parser
       provider = SQL::Provider.find "MySQL"
-      assert SQL::Parser.new.parse 'SELECT topics.* FROM topics WHERE topics.id = 147 LIMIT 1'
+      assert provider.parser.parse 'SELECT topics.* FROM topics WHERE topics.id = 147 LIMIT 1'
 
     end
 
