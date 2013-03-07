@@ -2,6 +2,14 @@
 
 VALUE cProvider;
 
+static VALUE name(VALUE self)
+{
+    GdaServerProvider * pr;
+    Data_Get_Struct(self, GdaServerProvider, pr);
+
+    return rb_tainted_str_new2(gda_server_provider_get_name(pr));
+}
+
 static VALUE find(VALUE klass, VALUE string)
 {
     GdaServerProvider * pr;
@@ -19,6 +27,7 @@ void Init_gda_provider()
 {
     cProvider = rb_define_class_under(mSQL, "Provider", rb_cObject);
     rb_define_singleton_method(cProvider, "find", find, 1);
+    rb_define_method(cProvider, "name", name, 0);
 }
 
 /* vim: set noet sws=4 sw=4: */

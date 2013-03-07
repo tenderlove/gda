@@ -20,5 +20,11 @@ module GDA
     def test_get_provider
       assert GDA::SQL::Provider.find SQL.providers.first
     end
+
+    def test_provider_name
+      name = SQL.providers.first
+      provider = SQL::Provider.find name
+      assert_equal name, provider.name
+    end
   end
 end
