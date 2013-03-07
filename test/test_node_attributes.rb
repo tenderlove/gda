@@ -144,6 +144,7 @@ module GDA
     end
 
     def setup
+      super
       @parser      = GDA::SQL::Parser.new
       @attr_tester = AttributeTest.new(self)
     end

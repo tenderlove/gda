@@ -6,6 +6,7 @@ module GDA
       attr_reader :parser
 
       def setup
+        super
         @parser = GDA::SQL::Parser.new
       end
 

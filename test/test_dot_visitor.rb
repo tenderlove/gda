@@ -28,6 +28,7 @@ module GDA
     end
 
     def setup
+      super
       @parser = GDA::SQL::Parser.new
       @viz    = TestViz.new(self)
     end

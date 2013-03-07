@@ -6,6 +6,7 @@ module GDA
       attr_reader :parser, :stmt
 
       def setup
+        super
         @parser = GDA::SQL::Parser.new
         @stmt = parser.parse 'SELECT * FROM FOO WHERE 1 = 1 GROUP BY omg HAVING omg(id) < 2 ORDER BY foo, bar LIMIT 50 OFFSET 2'
       end
