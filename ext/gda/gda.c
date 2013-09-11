@@ -16,7 +16,7 @@ static VALUE parse(VALUE self, VALUE sql)
 {
     GdaSqlParser * parser;
     GdaStatement * stmt;
-    GError * error;
+    GError * error = NULL;
     const gchar * rest;
 
     Data_Get_Struct(self, GdaSqlParser, parser);
