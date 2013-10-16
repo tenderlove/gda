@@ -2,7 +2,7 @@ require 'mkmf'
 
 # :stopdoc:
 
-ENV['PKG_CONFIG_PATH']= '/usr/local/Library/ENV/pkgconfig/mountain_lion'
+ENV['PKG_CONFIG_PATH'] ||= '/usr/local/Library/ENV/pkgconfig/10.8'
 
 dir_config 'libgda'
 
