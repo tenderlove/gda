@@ -7,11 +7,6 @@
 An SQL parser. Wraps libgda in a loving embrace to give you a ruby level SQL
 parser.
 
-== FEATURES/PROBLEMS:
-
-* Not done yet
-* Do not use
-
 == SYNOPSIS:
 
   parser = GDA::SQL::Parser.new
