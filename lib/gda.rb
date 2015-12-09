@@ -4,7 +4,7 @@ require 'gda/visitors/dot'
 require 'gda/visitors/max_depth'
 
 module GDA
-  VERSION = '1.0.1'
+  VERSION = '1.0.2'
 
   module SQL
     class Statement
