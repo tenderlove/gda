@@ -7,7 +7,11 @@ ENV['PKG_CONFIG_PATH'] ||= '/usr/local/Library/ENV/pkgconfig/10.8'
 dir_config 'libgda'
 
 def asplode missing
-  abort "#{missing} is missing. Try 'brew install libgda'"
+  abort <<-MSG
+#{missing} is missing. Try 'brew install libgda' if you are on OSX and have homebrew installed.
+You can also check https://github.com/GNOME/libgda for more info on how to install
+the dependency.
+MSG
 end
 
 pkg_config 'libgda-5.0'
