@@ -2,6 +2,39 @@ require 'helper'
 
 module GDA
   module SQL
+    class TestUnion < TestCase
+      attr_reader :parser, :stmt
+
+      def setup
+        @parser = GDA::SQL::Parser.new
+        sql = <<-SQL.gsub(/^ */, "")
+            SELECT id FROM posts WHERE actor_id = 1 AND actor_type = 1
+            UNION
+            SELECT id FROM posts WHERE actor_id = 1 AND actor_type = 3
+          SQL
+
+        @stmt = parser.parse(sql)
+      end
+
+      def test_union_query
+        assert_equal 2, stmt.ast.stmt_list.count
+        assert_equal 0, stmt.ast.compound_type, "should be an UNION type"
+      end
+
+      def test_union_query_visitor
+        visitor = Class.new(Visitors::Visitor) do
+          attr_reader :selects_count
+          def visit_GDA_Nodes_Select(*)
+            @selects_count ||= 0
+            @selects_count += 1
+          end
+        end.new
+
+        visitor.accept stmt.ast
+        assert_equal 2, visitor.selects_count
+      end
+    end
+
     class TestStatement < TestCase
       attr_reader :parser, :stmt
 

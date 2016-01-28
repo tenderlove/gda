@@ -23,6 +23,7 @@ VALUE cSavepoint;
 VALUE cBegin;
 VALUE cRollback;
 VALUE cCommit;
+VALUE cCompound;
 
 #define WrapInteger(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
@@ -146,6 +147,8 @@ WrapNode(cJoin, GdaSqlSelectJoin, expr);
 WrapList(cJoin, GdaSqlSelectJoin, use);
 WrapInteger(cJoin, GdaSqlSelectJoin, position);
 
+WrapInteger(cCompound, GdaSqlStatementCompound, compound_type);
+
 WrapList(cUnknown, GdaSqlStatementUnknown, expressions);
 
 static VALUE distinct_p(VALUE self)
@@ -236,11 +239,35 @@ VALUE WrapAnyPart(VALUE stmt, GdaSqlAnyPart *part)
 	case GDA_SQL_ANY_SQL_SELECT_JOIN:
 	    return Wrap(stmt, cJoin, part);
 	    break;
+    case GDA_SQL_ANY_STMT_COMPOUND:
+	    return Wrap(stmt, cCompound, part);
+	    break;
 	default:
 	    rb_raise(rb_eRuntimeError, "unknown node type: %d\n", part->type);
 	    return Qnil;
     }
 }
+
+
+static VALUE rb_cCompound_stmt_list(VALUE self)
+{
+    GdaSqlStatementCompound * st;
+    GSList * list;
+    VALUE array;
+    VALUE stmt;
+
+    Data_Get_Struct(self, GdaSqlStatementCompound, st);
+    stmt = rb_iv_get(self, "stmt");
+    array = rb_ary_new();
+
+    for (list = st->stmt_list; list; list = list->next) {
+      GdaSqlStatement *sqlst = (GdaSqlStatement*) list->data;
+      VALUE obj = Wrap(stmt, cSelect, GDA_SQL_ANY_PART(sqlst->contents));
+      rb_ary_push(array, obj);
+    }
+    return array;
+}
+
 
 static VALUE rb_cInsert_values_list(VALUE self)
 {
@@ -476,6 +503,10 @@ void Init_gda_nodes()
 
     cField = rb_define_class_under(mNodes, "Field", cNode);
     WrapperMethod(cField, field_name);
+
+    cCompound = rb_define_class_under(mNodes, "Compound", cNode);
+    WrapperMethod(cCompound, compound_type);
+    WrapperMethod(cCompound, stmt_list);
 
     cBegin = rb_define_class_under(mNodes, "Begin", cNode);
     cRollback = rb_define_class_under(mNodes, "Rollback", cNode);

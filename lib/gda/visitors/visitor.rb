@@ -94,6 +94,10 @@ module GDA
         visit node.expressions
       end
 
+      def visit_GDA_Nodes_Compound node
+        visit node.stmt_list
+      end
+
       ## Terminal nodes
       def visit_GDA_Nodes_Table node
       end
