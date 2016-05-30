@@ -3,7 +3,7 @@ require 'gda'
 require 'sqlite3'
 
 module GDA
-  class TestCase < MiniTest::Unit::TestCase
+  class TestCase < Minitest::Test
     @@rails_sql = nil
 
     def self.rails_sql
