@@ -34,17 +34,20 @@ module GDA
 
     def test_pg_parser
       provider = SQL::Provider.find "PostgreSQL"
+      skip "don't have PG provider" unless provider
       assert provider.parser.parse 'INSERT INTO "accounts" ("credit_limit", "firm_id", "firm_name") VALUES ($1, $2, $3) RETURNING "id"'
     end
 
     def test_mysql_parser
       provider = SQL::Provider.find "MySQL"
+      skip "don't have MySQL provider" unless provider
       assert provider.parser.parse 'SELECT topics.* FROM topics WHERE topics.id = 147 LIMIT 1'
 
     end
 
     def test_id_quote
       provider = SQL::Provider.find "MySQL"
+      skip "don't have MySQL provider" unless provider
       assert_equal '"1foo"', provider.quote("1foo")
     end
 
