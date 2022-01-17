@@ -49,6 +49,9 @@ void Init_gda_statement()
     cStatement = rb_define_class_under(mSQL, "Statement", rb_cObject);
     cStructure = rb_define_class_under(mSQL, "Structure", rb_cObject);
 
+    rb_undef_alloc_func(cStatement);
+    rb_undef_alloc_func(cStructure);
+
     rb_define_method(cStatement, "serialize", serialize, 0);
     rb_define_method(cStatement, "structure", structure, 0);
     rb_define_method(cStructure, "ast", ast, 0);
