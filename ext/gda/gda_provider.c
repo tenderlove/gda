@@ -52,6 +52,7 @@ static VALUE quote_str(VALUE self, VALUE str)
 void Init_gda_provider()
 {
     cProvider = rb_define_class_under(mSQL, "Provider", rb_cObject);
+    rb_undef_alloc_func(cProvider);
     rb_define_singleton_method(cProvider, "find", find, 1);
     rb_define_method(cProvider, "name", name, 0);
     rb_define_method(cProvider, "parser", parser, 0);

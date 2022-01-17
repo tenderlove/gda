@@ -419,6 +419,7 @@ void Init_gda_nodes()
     mNodes = rb_define_module_under(mGDA, "Nodes");
 
     cNode = rb_define_class_under(mNodes, "Node", rb_cObject);
+    rb_undef_alloc_func(cNode);
 
     cSelect = rb_define_class_under(mNodes, "Select", cNode);
     rb_define_method(cSelect, "distinct?", distinct_p, 0);
