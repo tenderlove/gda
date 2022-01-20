@@ -1,11 +1,9 @@
-require 'gda.so'
+require 'gda/gda'
 require 'gda/visitors/each'
 require 'gda/visitors/dot'
 require 'gda/visitors/max_depth'
 
 module GDA
-  VERSION = '1.1.1'
-
   module SQL
     class Statement
       def ast

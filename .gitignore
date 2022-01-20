@@ -1,2 +1,6 @@
 pkg
 .ruby_version
+tmp/
+*.bundle
+*.so
+*.dll

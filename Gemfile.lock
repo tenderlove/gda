@@ -1,0 +1,27 @@
+PATH
+  remote: .
+  specs:
+    gda (1.1.0.20190320134558)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.15.0)
+    rake (13.0.6)
+    rake-compiler (1.1.7)
+      rake
+    sqlite3 (1.4.2)
+
+PLATFORMS
+  x86_64-darwin-21
+  x86_64-linux
+
+DEPENDENCIES
+  gda!
+  minitest (~> 5.0)
+  rake (~> 13)
+  rake-compiler
+  sqlite3
+
+BUNDLED WITH
+   2.3.4
