@@ -10,9 +10,6 @@ end
 
 require "rake/extensiontask"
 
-Rake::ExtensionTask.new("gda") do |ext|
-  ext.ext_dir = 'ext/gda'
-  ext.lib_dir = "lib/gda"
-end
+Rake::ExtensionTask.new("gda")
 
 task default: %i(compile test)

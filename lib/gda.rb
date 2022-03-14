@@ -1,4 +1,4 @@
-require 'gda/gda'
+require 'gda.so'
 require 'gda/visitors/each'
 require 'gda/visitors/dot'
 require 'gda/visitors/max_depth'
