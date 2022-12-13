@@ -2,7 +2,7 @@
 
 * http://github.com/tenderlove/gda
 
-## DESCRIPTION:
+## DESCRIPTION
 
 An SQL parser. Wraps libgda in a loving embrace to give you a ruby level SQL
 parser.
