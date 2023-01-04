@@ -2,12 +2,12 @@
 
 * http://github.com/tenderlove/gda
 
-## DESCRIPTION
+## DESCRIPTION:
 
 An SQL parser. Wraps libgda in a loving embrace to give you a ruby level SQL
 parser.
 
-# SYNOPSIS
+## SYNOPSIS:
 
 ```ruby
 parser = GDA::SQL::Parser.new
@@ -27,6 +27,7 @@ puts stmt.ast.to_dot
     $ gem install hoe rake-compiler
     $ rake
 
+
 ## INSTALL
 
 
@@ -37,7 +38,7 @@ puts stmt.ast.to_dot
 
 (The MIT License)
 
-Copyright (c) 2012-2016 Aaron Patterson
+Copyright (c) 2012-2023 Aaron Patterson
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
