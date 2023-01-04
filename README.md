@@ -9,28 +9,32 @@ parser.
 
 ## SYNOPSIS:
 
-  parser = GDA::SQL::Parser.new
+```ruby
+parser = GDA::SQL::Parser.new
 
-  stmt = parser.parse 'SELECT * FROM FOO WHERE 1 = 1 GROUP BY omg HAVING omg(id) < 2 ORDER BY foo, bar LIMIT 50 OFFSET 2'
+stmt = parser.parse 'SELECT * FROM FOO WHERE 1 = 1 GROUP BY omg HAVING omg(id) < 2 ORDER BY foo, bar LIMIT 50 OFFSET 2'
 
-  stmt.ast.each do |node|
-    p node
-  end
+stmt.ast.each do |node|
+  p node
+end
 
-  puts stmt.ast.to_dot
+puts stmt.ast.to_dot
+```
 
-## HACKING:
+## HACKING
 
     $ brew install libgda
     $ gem install hoe rake-compiler
     $ rake
 
-## INSTALL:
 
-* brew install libgda
-* gem install gda
+## INSTALL
 
-## LICENSE:
+
+    $ brew install libgda
+    $ gem install gda
+
+## LICENSE
 
 (The MIT License)
 
