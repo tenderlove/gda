@@ -14,7 +14,7 @@ the dependency.
 MSG
 end
 
-pkg_config 'libgda-5.0'
+pkg_config 'libgda-6.0'
 find_header('libgda/sql-parser/gda-sql-parser.h') || asplode("libgda")
 
 create_makefile 'gda'
