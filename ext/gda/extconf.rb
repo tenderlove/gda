@@ -14,10 +14,14 @@ the dependency.
 MSG
 end
 
-pkg_config 'libgda-5.0'
-find_header('libgda/sql-parser/gda-sql-parser.h') || asplode("libgda")
+libgda = false
+%w(5.0 6.0).each do |version|
+  pkg_config "libgda-#{version}"
+  libgda = find_header('libgda/sql-parser/gda-sql-parser.h')
+end
+
+asplode("libgda") unless libgda
 
 create_makefile 'gda'
-
 
 # :startdoc:
