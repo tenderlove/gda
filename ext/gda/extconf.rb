@@ -14,9 +14,11 @@ the dependency.
 MSG
 end
 
-available_libgda_pkg_config = %w(5.0 6.0).find do |pkg_config_version|
+available_libgda_pkg_config = nil
+%w(5.0 6.0).each do |pkg_config_version|
   pkg_config "libgda-#{pkg_config_version}"
-  find_header('libgda/sql-parser/gda-sql-parser.h')
+  available_libgda_pkg_config = find_header('libgda/sql-parser/gda-sql-parser.h')
+  break if available_libgda_pkg_config
 end
 
 asplode("libgda") unless available_libgda_pkg_config
