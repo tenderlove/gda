@@ -35,6 +35,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install packages (macos)
+        run: brew install libgda # NOTE: current libgda is 6.0
+        if: matrix.os == 'macos'
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
