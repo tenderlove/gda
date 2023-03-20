@@ -8,7 +8,7 @@ dir_config 'libgda'
 
 def asplode missing
   abort <<-MSG
-#{missing} is missing. Try 'brew install libgda' if you are on OSX and have homebrew installed.
+#{missing} is missing. Try 'brew install pkg-config libgda' if you are on OSX and have homebrew installed.
 You can also check https://github.com/GNOME/libgda for more info on how to install
 the dependency.
 MSG
