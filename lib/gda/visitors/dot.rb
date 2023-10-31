@@ -32,19 +32,19 @@ module GDA
         @buffer.printf(*args)
       end
 
-      NODE = ERB.new <<-eoerb
-node<%= node.object_id %> [shape="plaintext" label=<
-<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
-<TR><TD COLSPAN="2"><%= node.class %></TD></TR>
-<% attrs.each do |attr| %>
-  <% next if node.send(attr).nil? %>
-  <TR><TD><%= ERB::Util.h attr %></TD><TD><%= ERB::Util.h node.send(attr) %></TD></TR>
-<% end %>
-</TABLE>>];
+      NODE = ERB.new <<~eoerb
+        node<%= node.object_id %> [shape="plaintext" label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+        <TR><TD COLSPAN="2"><%= node.class %></TD></TR>
+        <% attrs.each do |attr| %>
+          <% next if node.send(attr).nil? %>
+          <TR><TD><%= ERB::Util.h attr %></TD><TD><%= ERB::Util.h node.send(attr) %></TD></TR>
+        <% end %>
+        </TABLE>>];
       eoerb
 
-      LIST = ERB.new <<-eoerb
-node<%= node.object_id %> [shape="invhouse", color=gray, fontcolor=gray, label=list];
+      LIST = ERB.new <<~eoerb
+        node<%= node.object_id %> [shape="invhouse", color=gray, fontcolor=gray, label=list];
       eoerb
 
       def add_node node, attrs = []

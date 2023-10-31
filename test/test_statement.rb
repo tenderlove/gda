@@ -7,11 +7,11 @@ module GDA
 
       def setup
         @parser = GDA::SQL::Parser.new
-        sql = <<-SQL.gsub(/^ */, "")
-            SELECT id FROM posts WHERE actor_id = 1 AND actor_type = 1
-            UNION
-            SELECT id FROM posts WHERE actor_id = 1 AND actor_type = 3
-          SQL
+        sql = <<~SQL.gsub(/^ */, "")
+          SELECT id FROM posts WHERE actor_id = 1 AND actor_type = 1
+          UNION
+          SELECT id FROM posts WHERE actor_id = 1 AND actor_type = 3
+        SQL
 
         @stmt = parser.parse(sql)
       end
