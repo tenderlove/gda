@@ -61,7 +61,7 @@ static VALUE quote_str(VALUE self, VALUE str)
     return rb_str_new2(gda_sql_identifier_quote(StringValuePtr(str), NULL, pr, TRUE, TRUE));
 }
 
-void Init_gda_provider()
+void Init_gda_provider(void)
 {
     rb_global_variable(&cProvider);
     cProvider = rb_define_class_under(mSQL, "Provider", rb_cObject);

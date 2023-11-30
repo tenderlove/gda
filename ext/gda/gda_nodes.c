@@ -426,7 +426,7 @@ static VALUE rb_cExpr_value(VALUE self)
     return rb_str_new2(gda_value_stringify(val));
 }
 
-void Init_gda_nodes()
+void Init_gda_nodes(void)
 {
     mNodes = rb_define_module_under(mGDA, "Nodes");
 

@@ -128,7 +128,7 @@ static VALUE sql_identifier_split(VALUE klass, VALUE string)
     return ids;
 }
 
-void Init_gda()
+void Init_gda(void)
 {
     rb_global_variable(&mGDA);
     mGDA = rb_define_module("GDA");

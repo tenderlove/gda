@@ -58,7 +58,7 @@ static VALUE structure(VALUE self)
     return TypedData_Wrap_Struct(cStructure, &structure_type, sqlst);
 }
 
-void Init_gda_statement()
+void Init_gda_statement(void)
 {
     rb_global_variable(&cStatement);
     cStatement = rb_define_class_under(mSQL, "Statement", rb_cObject);
