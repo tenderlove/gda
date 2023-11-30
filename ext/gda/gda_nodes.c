@@ -25,11 +25,23 @@ VALUE cRollback;
 VALUE cCommit;
 VALUE cCompound;
 
+static const rb_data_type_t any_part_type = {
+    "GDA::SQL::AnyPart",
+    {
+        NULL,
+        NULL,
+        NULL,
+    },
+    0,
+    0,
+    RUBY_TYPED_FREE_IMMEDIATELY | RUBY_TYPED_WB_PROTECTED,
+};
+
 #define WrapInteger(klass, type, lname) \
     static VALUE rb_##klass##_##lname(VALUE self) \
 { \
     type *st;\
-    Data_Get_Struct(self, type, st); \
+    TypedData_Get_Struct(self, type, &any_part_type, st); \
     return INT2NUM(st->lname); \
 }
 
@@ -37,7 +49,7 @@ VALUE cCompound;
     static VALUE rb_##klass##_##lname(VALUE self) \
 { \
     type *st;\
-    Data_Get_Struct(self, type, st); \
+    TypedData_Get_Struct(self, type, &any_part_type, st); \
     if (st->lname) \
       return Qtrue; \
     else \
@@ -48,7 +60,7 @@ VALUE cCompound;
     static VALUE rb_##klass##_##lname(VALUE self) \
 { \
     type *st;\
-    Data_Get_Struct(self, type, st); \
+    TypedData_Get_Struct(self, type, &any_part_type, st); \
     if (st->lname) \
       return rb_str_new2(st->lname); \
     else \
@@ -60,7 +72,7 @@ VALUE cCompound;
 { \
     type *st;\
     VALUE stmt;\
-    Data_Get_Struct(self, type, st); \
+    TypedData_Get_Struct(self, type, &any_part_type, st); \
     stmt = rb_iv_get(self, "stmt"); \
     return WrapAnyPart(stmt, (GdaSqlAnyPart *)st->lname); \
 }
@@ -72,7 +84,7 @@ VALUE cCompound;
     GSList *list; \
     VALUE rb_list; \
     VALUE stmt; \
-    Data_Get_Struct(self, type, ptr);\
+    TypedData_Get_Struct(self, type, &any_part_type, ptr);\
     stmt = rb_iv_get(self, "stmt"); \
     rb_list = rb_ary_new(); \
     list = ptr->lname; \
@@ -155,7 +167,7 @@ static VALUE distinct_p(VALUE self)
 {
     GdaSqlStatementSelect * st;
 
-    Data_Get_Struct(self, GdaSqlStatementSelect, st);
+    TypedData_Get_Struct(self, GdaSqlStatementSelect, &any_part_type, st);
 
     if (st->distinct)
 	return Qtrue;
@@ -165,7 +177,7 @@ static VALUE distinct_p(VALUE self)
 
 static VALUE Wrap(VALUE stmt, VALUE klass, GdaSqlAnyPart *part)
 {
-    VALUE obj = Data_Wrap_Struct(klass, NULL, NULL, part);
+    VALUE obj = TypedData_Wrap_Struct(klass, &any_part_type, part);
     rb_iv_set(obj, "stmt", stmt);
     return obj;
 }
@@ -256,7 +268,7 @@ static VALUE rb_cCompound_stmt_list(VALUE self)
     VALUE array;
     VALUE stmt;
 
-    Data_Get_Struct(self, GdaSqlStatementCompound, st);
+    TypedData_Get_Struct(self, GdaSqlStatementCompound, &any_part_type, st);
     stmt = rb_iv_get(self, "stmt");
     array = rb_ary_new();
 
@@ -276,7 +288,7 @@ static VALUE rb_cInsert_values_list(VALUE self)
     VALUE array;
     VALUE stmt;
 
-    Data_Get_Struct(self, GdaSqlStatementInsert, st);
+    TypedData_Get_Struct(self, GdaSqlStatementInsert, &any_part_type, st);
 
     stmt = rb_iv_get(self, "stmt");
 
@@ -302,7 +314,7 @@ static VALUE rb_cOperation_operator(VALUE self)
 {
     GdaSqlOperation * st;
 
-    Data_Get_Struct(self, GdaSqlOperation, st);
+    TypedData_Get_Struct(self, GdaSqlOperation, &any_part_type, st);
 
     if (st->operator_type)
 	return rb_str_new2(gda_sql_operation_operator_to_string(st->operator_type));
@@ -314,7 +326,7 @@ static VALUE rb_cJoin_join_type(VALUE self)
 {
     GdaSqlSelectJoin * st;
 
-    Data_Get_Struct(self, GdaSqlSelectJoin, st);
+    TypedData_Get_Struct(self, GdaSqlSelectJoin, &any_part_type, st);
 
     if (st->type)
 	return rb_str_new2(gda_sql_select_join_type_to_string(st->type));
@@ -326,7 +338,7 @@ static VALUE rb_st_type(VALUE self)
 {
     GdaSqlAnyPart * st;
 
-    Data_Get_Struct(self, GdaSqlAnyPart, st);
+    TypedData_Get_Struct(self, GdaSqlAnyPart, &any_part_type, st);
 
     switch(st->type) {
 	case GDA_SQL_ANY_STMT_BEGIN:
@@ -356,7 +368,7 @@ static VALUE rb_st_isolation_level(VALUE self)
 {
     GdaSqlStatementTransaction * st;
 
-    Data_Get_Struct(self, GdaSqlStatementTransaction, st);
+    TypedData_Get_Struct(self, GdaSqlStatementTransaction, &any_part_type, st);
 
     switch(st->isolation_level) {
 	default:
@@ -382,7 +394,7 @@ static VALUE rb_st_trans_mode(VALUE self)
 {
     GdaSqlStatementTransaction * st;
 
-    Data_Get_Struct(self, GdaSqlStatementTransaction, st);
+    TypedData_Get_Struct(self, GdaSqlStatementTransaction, &any_part_type, st);
 
     if (st->trans_mode)
 	return rb_str_new2(st->trans_mode);
@@ -394,7 +406,7 @@ static VALUE rb_st_trans_name(VALUE self)
 {
     GdaSqlStatementTransaction * st;
 
-    Data_Get_Struct(self, GdaSqlStatementTransaction, st);
+    TypedData_Get_Struct(self, GdaSqlStatementTransaction, &any_part_type, st);
 
     if (st->trans_name)
 	return rb_str_new2(st->trans_name);
@@ -407,7 +419,7 @@ static VALUE rb_cExpr_value(VALUE self)
     GdaSqlExpr * st;
     GValue * val;
 
-    Data_Get_Struct(self, GdaSqlExpr, st);
+    TypedData_Get_Struct(self, GdaSqlExpr, &any_part_type, st);
 
     val = st->value;
 

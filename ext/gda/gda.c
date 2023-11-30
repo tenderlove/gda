@@ -4,12 +4,65 @@ VALUE mGDA;
 VALUE mSQL;
 VALUE cParser;
 
+static void parser_free(void *data)
+{
+    g_object_unref((GdaSqlParser *)data);
+}
+
+static size_t parser_memsize(const void *data)
+{
+    return sizeof(GdaSqlParser);
+}
+
+static const rb_data_type_t parser_type = {
+  "GDA::SQL::Parser",
+  {
+      NULL,
+      parser_free,
+      parser_memsize,
+  },
+  0,
+  0,
+  RUBY_TYPED_FREE_IMMEDIATELY | RUBY_TYPED_WB_PROTECTED,
+};
+
+VALUE gda_parser_wrap(VALUE klass, GdaSqlParser * parser)
+{
+    return TypedData_Wrap_Struct(klass, &parser_type, parser);
+}
+
 static VALUE allocate(VALUE klass)
 {
-    GdaSqlParser * parser;
+    return gda_parser_wrap(klass, gda_sql_parser_new());
+}
 
-    parser = gda_sql_parser_new();
-    return Data_Wrap_Struct(klass, NULL, g_object_unref, parser);
+static void statement_free(void *data)
+{
+    g_object_unref((GdaStatement *)data);
+}
+
+static size_t statement_memsize(const void *data)
+{
+    return sizeof(GdaStatement);
+}
+
+static const rb_data_type_t statement_type = {
+  "GDA::SQL::Statement",
+  {
+      NULL,
+      statement_free,
+      statement_memsize,
+  },
+  0,
+  0,
+  RUBY_TYPED_FREE_IMMEDIATELY | RUBY_TYPED_WB_PROTECTED,
+};
+
+GdaStatement *gda_statement_unwrap(VALUE self)
+{
+    GdaStatement * stmt;
+    TypedData_Get_Struct(self, GdaStatement, &statement_type, stmt);
+    return stmt;
 }
 
 static VALUE parse(VALUE self, VALUE sql)
@@ -19,7 +72,7 @@ static VALUE parse(VALUE self, VALUE sql)
     GError * error = NULL;
     const gchar * rest;
 
-    Data_Get_Struct(self, GdaSqlParser, parser);
+    TypedData_Get_Struct(self, GdaSqlParser, &parser_type, parser);
 
     stmt = gda_sql_parser_parse_string(parser, StringValuePtr(sql), &rest, &error);
 
@@ -27,7 +80,7 @@ static VALUE parse(VALUE self, VALUE sql)
 	rb_raise(rb_eRuntimeError, "error parsing sql");
     }
 
-    return Data_Wrap_Struct(cStatement, NULL, g_object_unref, stmt);
+    return TypedData_Wrap_Struct(cStatement, &statement_type, stmt);
 }
 
 static VALUE providers(VALUE klass)
@@ -77,13 +130,17 @@ static VALUE sql_identifier_split(VALUE klass, VALUE string)
 
 void Init_gda()
 {
-
+    rb_global_variable(&mGDA);
     mGDA = rb_define_module("GDA");
+
+    rb_global_variable(&mSQL);
     mSQL = rb_define_module_under(mGDA, "SQL");
 
     Init_gda_statement();
     Init_gda_nodes();
     Init_gda_provider();
+
+    rb_global_variable(&cParser);
     cParser = rb_define_class_under(mSQL, "Parser", rb_cObject);
 
     rb_define_alloc_func(cParser, allocate);
