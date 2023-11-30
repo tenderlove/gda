@@ -11,6 +11,9 @@ extern VALUE mSQL;
 extern VALUE cStatement;
 extern VALUE cParser;
 
+GdaStatement *gda_statement_unwrap(VALUE stmt);
+VALUE gda_parser_wrap(VALUE klass, GdaSqlParser * parser);
+
 #include <gda_statement.h>
 #include <gda_nodes.h>
 #include <gda_provider.h>
